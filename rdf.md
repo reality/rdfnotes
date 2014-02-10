@@ -1,4 +1,4 @@
-==RDF - Resource Description Framework==
+# RDF - Resource Description Framework
 
 * Language for representing metadata about resources on the WWW.
 * Intended for solutions in which the information needs to be processed by
@@ -17,7 +17,9 @@
 * RDF uses URIs as the basis of its mechanism for identifying subjects, predicates and objects
 * Triples notation <subject> <predicate> <object>
 
+```
 http://www.example.org/index.html has a creator whose value is John Smith
+```
 
 * URIRef useful for objects, better identification. Provides fully-fledged
   resource. Can add more RDF statements using URIRef Object as Subject.
@@ -46,5 +48,5 @@ http://www.example.org/index.html has a creator whose value is John Smith
 * This can be a URIref
 * RDF itself does not confirm the validity of the datatype
 
-Sources:
+##Sources
 * RDF Primer - http://www.w3.org/TR/rdf-primer/
