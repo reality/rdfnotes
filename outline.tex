@@ -1,0 +1,179 @@
+\documentclass{article}
+\usepackage{listings}
+\usepackage{graphicx}
+
+\lstset{ %
+language=Java,                  % the language of the code
+basicstyle=\footnotesize,       % the size of the fonts that are used for the code
+numbers=left,                   % where to put the line-numbers
+numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
+stepnumber=1,                   % the step between two line-numbers. If it's 1, each line 
+                                % will be numbered
+numbersep=5pt,                  % how far the line-numbers are from the code
+showspaces=false,               % show spaces adding particular underscores
+showstringspaces=false,         % underline spaces within strings
+showtabs=false,                 % show tabs within strings adding particular underscores
+frame=single,                   % adds a frame around the code
+tabsize=2,                      % sets default tabsize to 2 spaces
+captionpos=t,                   % sets the caption-position to bottom
+breaklines=true,                % sets automatic line breaking
+breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+title=\lstname,                 % show the filename of files included with \lstinputlisting;
+}
+
+\begin{document}
+
+\setlength{\parskip}{\medskipamount}
+\setlength{\parindent}{0pt}
+
+\title{Outline Project Specification}
+\author{Luke Slater (lus11@aber.ac.uk)}
+\date{February 2014}
+
+\maketitle
+
+\pagebreak
+
+\section{Project Description}
+
+My project is concerned with interlinking two semantic web technologies,
+allowing reasoning to take place in a remote system from a local endpoint and
+allowing these results to be utilised by the initial query. This is undertaken
+with a view to increase the interoperability of semantic web technologies, and
+increase the power and usefulness of the federation they work in.
+
+Specifically, the project will be the creation of an addition to
+SPARQL\cite{sparql} (SPARQL Protocol And RDF Query Language) to allow remote
+OWL\cite{owlprimer} reasoning to be performed on OWLlink endpoints and be included in the
+SPARQL result-set.
+
+There is a similar construct already included in the SPARQL language called
+\emph{SERVICE}, which is unfortunately not suitable for use in this project
+because it won't support the syntax of the OWL language within it (however, it
+might be worth contacting the developers of the SPARQL specification asking if a
+generalisation would be prudent).
+
+So, I will develop a similar addition to the language, such as an \emph{OWL}
+block, which will allow the language to execute a given OWL query at a given
+OWLlink endpoint (along with the possibility of a flag depending on the type of
+SPARQL query), and then retrieve these results and use them in the SPARQL
+result-set.
+
+Furthermore, I will endeavour to create a working implementation of this
+addition - which will allow a demonstration of the system. This will require
+some research into the various technologies currently available.
+
+Upon finishing the research project, the findings will be presented in the form
+of a scientific paper presenting the specification of the addition to the
+language, its impact and its uses.
+
+\section{Proposed Tasks}
+
+\subsection{Research}
+
+Being a research project, most of the work involved will be research-orientated
+in learning the relevant technologies and their inter-workings. Starting with
+background information on the Semantic Web\cite{semweb} and then onto the specifications and
+workings of the technologies designed to implement this vision. After that,
+specifics will need to be learned about certain implementations of said
+technologies required to implement a working model of the proposed system.
+
+The main technologies involved which will need to be learned are
+RDF\cite{rdfprimer}, SPARQL, Turtle, OWL and OWLlink. Gaining an understanding
+of OWL will also require some background in Description Logic\cite{desclogic}.
+
+\subsection{Implementation}
+
+The implementation will centre around utilising the technologies researched in
+previously to implement the target functionality. I will have to pick an
+implementation of SPARQL and on top of that develop the extension which allows it to
+make remote OWL requests on an OWLlink server. There are a few implementations
+existing, but the major OWL API looks like a good choice given its widespread
+adoptance.
+
+Testing the implementation and creating the working demonstration will involve
+the deployment of a SPARQL endpoint which has the ability to make remote OWL
+requests. For this I will also host an OWLlink server which will be able to
+return the results.
+
+Either automatic testing or manual testing may take place depending on the
+provisions for this made in the various softwares.
+
+\section{Project Deliverables}
+
+\begin{itemize}
+  \item \emph{Specification} - This will involve a description of the language additions 
+  and their syntax in a 'specification'-type format. 
+  \item \emph{Implementation} - An implementation of the above addition in the
+  form of an addition to a piece of software which iplements a SPARQL server to
+  allow for the running of the queries detailed above.
+  \item \emph{Working Demonstration} - In the form of a working SPARQL endpoint
+  and an OWLlink endpoint, with the ability for the former to run queries on the
+  latter through the previously developed language extension.
+  \item \emph{Tests} - A couple of tests (either manual or automatic) which
+  prove the extensions as working.
+  \item \emph{Progress Report} - This involves a mid-period report which covers
+  an overview of the technologies learned, and details on the specification and 
+  implementation of the extension to SPARQL.
+  \item \emph{Paper} - Scientific paper describing the results of the research
+  project.
+  \item \emph{Final Report} - Report covering the entire project, including
+  a full project description, background, impact and significance, 
+  implementation process, documentation and evaluation of final progress.
+\end{itemize}
+
+\begin{thebibliography}{9}
+
+\bibitem{semweb}
+  Tim Berners-Lee et al,
+  \emph{The Semantic Web}.
+  Feature Article, Scientific American
+  May 2001.
+    \\  
+    \emph{This article is definitive in describing the initial idea and goals for the
+    'Semantic Web,' by the project's founders. It provides the 'vision' for the
+    semantic web and is therefore an underlying background for all of the
+    technologies used in this project.}
+
+\bibitem{rdfprimer}
+ Tim Berners-Lee et al,
+ \emph{RDF Primer}.
+ W3C,
+ 2004.
+   \\ 
+   \emph{This W3C 'primer' document provides a detailed description of the RDF
+   datastore - its uses, significance and implementation details. Important to
+   gain an understanding of the data format which will be one of the two
+   technologies being connected.}
+
+\bibitem{sparql}
+  Eric Prud'hommeaux, Andy Seaborne,
+  \emph{SPARQL Query Language for RDF}.
+  W3C,
+  January 2008.
+    \\ 
+    \emph{This specification describes the SPARQL query language, used for
+    interaction with RDF datastores. Good for a background and details of 
+    the technology I will be extending.}
+
+\bibitem{desclogic}
+ Franz Baader, Deborah L. McGuinness, Daniele Nardi, Peter F. Patel-Schneider,
+ \emph{The Description Logic Handbook - Theory, Implementation and Actions}.
+ Cambridge University Press,
+ March 2003.
+   \\ 
+   \emph{This book provides the background for description logic, which is the
+   grounding for the OWL language.}
+
+\bibitem{owlprimer}
+  Pascal Hitzler et al,
+  \emph{OWL 2 Web Ontology Language Primer (Second Edition)}.
+  W3C,
+  December 2012.
+  \\ 
+  \emph{This is a primer on the language which is going to be implemented in
+  SPARQL. Good for understanding the logic and usability.}
+
+\end{thebibliography}
+
+\end{document}

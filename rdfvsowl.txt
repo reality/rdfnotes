@@ -1,0 +1,17 @@
+Descriptive logic:
+* Nodes are used to characterise concepts 
+* Mother IS-A Parent
+* Concept of parent has a property that is called a role, expressed by a link
+    from the concept to a node for the role labelled as hasChild
+* A parent is a person having at least one child, and all of his/her
+  children are persons
+the concept Mother , i.e., a female parent, is a more specific descendant of both the concepts Female and Parent, and as a result inherits from Parent the link to Person through the role hasChild; in other words, Mother inherits the restriction on its hasChild role from Parent 
+
+RDF:
+*
+
+Differences:
+*
+
+Similarities:
+*

@@ -1,0 +1,28 @@
+Implementation Notes
+
+ARQParser: OwlGraphPattern
+ARQParserConstraints
+
+ElementOwl
+
+ElementVisitor
+
+Extend NodeFactory to accept OWL reasoning
+
+Create arq.sparql --owl to start with
+
+Fix com.hp.hpl.jena.sparql.engine.http to allow owl
+
+AlgebraGenerator to return plain text
+
+Create OpOwl
+
+package com.hp.hpl.jena.sparql.engine.http.Service
+
+Don't bother with OpAsQuery
+
+Query -> Op -> Query
+
+Merge QueryIterService and QueryIterOwl to QueryIterHttp
+
+Make parent class for OpService and OpOwl?

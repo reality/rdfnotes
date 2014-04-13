@@ -1,0 +1,369 @@
+\documentclass{article}
+\usepackage{listings}
+\usepackage{graphicx}
+
+\lstset{ %
+language=Java,                  % the language of the code
+basicstyle=\footnotesize,       % the size of the fonts that are used for the code
+numbers=left,                   % where to put the line-numbers
+numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
+stepnumber=1,                   % the step between two line-numbers. If it's 1, each line 
+                                % will be numbered
+numbersep=5pt,                  % how far the line-numbers are from the code
+showspaces=false,               % show spaces adding particular underscores
+showstringspaces=false,         % underline spaces within strings
+showtabs=false,                 % show tabs within strings adding particular underscores
+frame=single,                   % adds a frame around the code
+tabsize=2,                      % sets default tabsize to 2 spaces
+captionpos=t,                   % sets the caption-position to bottom
+breaklines=true,                % sets automatic line breaking
+breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+title=\lstname,                 % show the filename of files included with \lstinputlisting;
+}
+
+\begin{document}
+
+\setlength{\parskip}{\medskipamount}
+\setlength{\parindent}{0pt}
+
+\title{Extending SPARQL With Remote OWL Reasoning}
+\author{Luke Slater (lus11@aber.ac.uk)}
+\date{February 2014}
+
+\maketitle
+
+\pagebreak
+
+\section{Introduction}
+
+My project is concerned with interlinking two semantic web technologies,
+allowing reasoning to take place in a remote system from a local endpoint and
+allowing these results to be utilised by the initial query. This is undertaken
+with a view to increase the interoperability of semantic web technologies, and
+increase the power and usefulness of the federation they work in.
+
+Specifically, the project will be the creation of an addition to
+SPARQL\cite{sparql} (SPARQL Protocol And RDF Query Language) to allow remote
+OWL\cite{owlprimer} reasoning to be performed on OWLlink endpoints and be included in the
+SPARQL result-set.
+
+There is a similar construct already included in the SPARQL language called
+\emph{SERVICE}, which is unfortunately not suitable for use in this project
+because it won't support the syntax of the OWL language within it (however, it
+might be worth contacting the developers of the SPARQL specification asking if a
+generalisation would be prudent).
+
+So, I will develop a similar addition to the language, such as an \emph{OWL}
+block, which will allow the language to execute a given OWL query at a given
+OWLlink endpoint (along with the possibility of a flag depending on the type of
+SPARQL query), and then retrieve these results and use them in the SPARQL
+result-set.
+
+Furthermore, I will endeavour to create a working implementation of this
+addition - which will allow a demonstration of the system. This will require
+some research into the various technologies currently available.
+
+Upon finishing the research project, the findings will be presented in the form
+of a scientific paper presenting the specification of the addition to the
+language, its impact and its uses.
+
+\section{State of The Art in The Semantic Web}
+
+\subsection{The Semantic Web}
+
+The Semantic Web is a set of technologies and methodologies suitable for
+generalised data expression, transmission and processing over the World Wide
+Web. Before this, up until the Semantic Web's philosophical beginnings in
+2001, the World Wide Web had seen success as a platform for the
+sharing resources intended for reading and interaction by humans.
+
+This meant that most of the data existed in the format of forward-facing 
+documents accessible via URLs, content comprising of arbitrary natural language
+along with human-intended formatting and navigation techniques.
+
+The downside of this, is that without using advanced natural language 
+processing techniques, it's very difficult to then have software process and
+intercommunicate this data in a generalised and useful manner.
+
+Therefore, the philosophy of the semantic web acknowledges this need for a
+reconciliation of certain data in a format which software can deal in. The
+Semantic Web\cite{semweb} describes the vision of a futuristic world of home
+automation and service intercommunication serving the human lifestyle, backed by
+these data formats which allow software to easily traverse the totality of
+available data and process it in a meaningful manner. 
+
+\subsection{RDF}
+
+One of the primary technologies used to represent this machine-workable data on
+the web is the Resource Description Framework (RDF), which are a set of
+specifications which describe a general methodology for conceptualising and
+modelling data, intended for solutions in which the data needs to be processed
+by applications.
+
+It forms a graph of statements representing metadata about resources on the
+World Wide Web in the form of simple statements in the terms of simple
+properties and property values. Each RDF statement is formed of a Subject, a
+Predicate and an Object:
+
+\begin{description}
+    \item[Subject] The object being described.
+    \item[Predicate] The definition of the property of the subject being
+    defined - usually given as a URI reference or URIRef.
+    \item[Object] This is the value assigned to the given
+    predicate-defined property of the subject.
+\end{description}
+
+For example, in the simplest terms a statement which defines the name of the author of
+this document might take the form:
+
+http://users.aber.ac.uk/lus11/dissertation has an author whose value is Luke
+Slater.
+
+In which the subject is \emph{http://users.aber.ac.uk/lus11/dissertation}, the
+predicate is \emph{author} and the object is \emph{Luke Slater}.
+
+RDF information is commonly stored, transmitted and worked with using the
+RDF/XML format, which is an expression of the graph data structures in the
+eXtensible Markup Language (XML) - a language designed to store and encode
+documents (as opposed to HTML, which is for displaying data). Alternatively, and
+in the remainder of this document, the Turtle format is used to communicate RDF
+in a format which is both computer and human readable.
+
+Usually, URIs are used to identify objects, subjects and predicates because they
+allow them to be fully-fledged resources and in using already-defined
+vocabularies one can avoid using multiple strings to refer to the same thing.
+
+So, a full example
+
+\subsection{SPARQL}
+
+SPARQL (SPARQL Protocol And RDF Query Language) is a query language similar to
+SQL which allows the querying and manipulation of RDF (and similar) datastores.
+This is a human-interactable language, which means that while it has a
+non-freeform syntax it is designed to be used by humans (as well as computers)
+to interact with data on the semantic web.
+
+SPARQL queries usually consist of the following:
+
+\begin{description}
+    \item[PREFIX] A list of prefix declarations, which can be used to shorten
+    and simplify URIs in the remainder of the query.
+    \item[FROM] Describes the dataset to query, usually a URI pointing at an RDF
+    dataset.
+    \item[SELECT] Describes the data to include in the resultset.
+    \item[WHERE] Describes the data to query for in the dataset.
+    \item[MODIFIERS] These allow you to apply modifiers to the resultset, such
+    as a limitation on the total results or a pattern for ordering.
+\end{description}
+
+Less commonly there are also CONSTRUCT, which allows you to pull full triples of
+data from a store.
+
+SPARQL also has the provision to query data from non-RDF databases such as Redis
+and OWL ontologies by transforming and interacting with the data as if it were
+in an RDF syntax. This is useful for data integration, as it means data can be
+used over multiple formats. 
+
+Another important quality of SPARQL is that it's federated, data may be loaded
+remotely over the web by providing an IRI to the datastore. Also, the language
+includes a 'SERVICE' keyword, which allows a query to be sent to a remote SPARQL
+endpoint and be executed and results be returned and included in the resultset.
+
+A SPARQL endpoint is a simple interface which accepts a HTTP query including a
+query parameter, then runs the query and will return the results in one of 
+several machine-readable formats (usually JSON or XML). This means a wide array
+of applications can easily make use of the data SPARQL deals in - one example
+being Virtuoso. It also means that simple online interfaces can be developed for 
+working with SPARQL. These qualities mean that SPARQL makes RDF very universally
+available for use.
+
+\subsection{OWL Ontologies}
+
+* Describing ontologies
+* Describe OWL
+
+\section{Problem Statement}
+
+\subsection{Data Integration}
+
+The issue with the Semantic Web as it currently exists is that while there is a
+lot of data stored in machine-processable formats, there is a lot of information 
+existing in different data models (RDF and OWL ontologies, in respects to this project). 
+This means it becomes somewhat difficult to integrate data between said models 
+if they are representing similar data in different ways.
+
+There is already some provision for this, as explained in the previous section - 
+SPARQL does actually allow data to be queried from an OWL ontology, loading a full 
+list of objects in an ontology designated by an IRI and then being able to query 
+it in an RDF expression. However, while this is useful in some cases, it misses 
+two major advantages of OWL ontologies: the performance of semantic reasoning
+upon the dataset, and the ability to query the data in a native manner (using 
+Manchester OWL Syntax).
+
+Therefore the problem in this case is developing a manner by which to integrate
+data stored in RDF and OWL formats without compromising the endemic qualities of 
+each model through doing so.
+
+* Why it's useful
+
+\subsection{Human-interactable OWL Querying Over The Web}
+
+As described in the State of The Semantic Web, there are two categories of
+languages used to represent and interact with the data: human-interactable and
+machine-interactable. These generally exist as the data storage formats (such as
+RDF or OWL) and the query languages (such as SPARQL or Manchester OWL Syntax)
+which can be used by humans to manipulate and integrate the datastores.
+
+An issue with the Semantic Web is also that of exposing these datasets to use by
+computers and machines over the Web i.e. data avilability and integration over
+the web.
+
+For both RDF and OWL datastores it is currently easy to interact with the data
+over the web in a machine-processable manner - primarily through codebases
+utilising XML parsers or through bespoke libraries and server software such as 
+OWLAPI and OWLLink.
+
+For human-querying, the area is highly-developed for RDF and similar datastores, 
+with SPARQL allowing users to write queries to manipulate data both locally and
+through web-based endpoints. The language also supports federation through the
+SERVICE keyword, which allows the user to send further data queries to remote
+SPARQL endpoints and thereby further datasets. This is incredible useful for
+making useful data easily available and integratable to those working with it.
+
+However, for OWL ontologies the situation is somewhat different,
+human-interaction with ontologies is generally done through desktop applications
+such as Protégé, which allows users to load, edit, reason and query ontologies 
+using the Manchester OWL Syntax.
+
+However, there is currently no way for users to send simple Manchester OWL
+Syntax queries to remote reasoners and retrieve relevant classes for use. 
+Therefore, another problem is providing a web-based solution for human-input OWL
+queries over multiple ontologies through Web. 
+
+\section{Design and Implementation}
+
+My solution to the given problems are to develop an extension to the SPARQL
+query language which allows a user to send a Manchester OWL Syntax query to a
+remote OWL reasoner endpoint, which will return relevant objects which are
+included in the SPARQL resultset. This will require both development of the
+language extension and the queriable OWL endpoint.
+
+\subsection{SPARQL Extension}
+
+As described in the State of The Art, there is already a SERVICE keyword
+included in the SPARQL language which provides a good model for sending a text
+query to a remote endpoint. Currently, it only supports remote SPARQL endpoints,
+and it was decided not to extend this construct to include support for an OWL
+endpoint as this would mean any resulting implementation would break the terms
+of the SPARQL specification. However, it may be suggested to the W3C in future
+to combine these constructs as a matter of efficiency. 
+
+Therefore, my software will add an 'OWL' block to the SPARQL language, which
+uses a similar syntactic pattern to the SERVICE keyword.
+
+\begin{lstlisting}
+OWL <http://realispicio.us:9090> {
+    Pizza and hasTopping some FishTopping
+}
+\end{lstlisting}
+
+There are three properties to the above query:
+
+\begin{description}
+    \item[OWL] The OWL keyword will designate the beginning of an OWL block
+    denoting the beginning of the description for a query to be sent to a remote
+    OWL endpoint.
+    \item[IRI] The IRI, contained between angled brackets following the OWL
+    keyword, will define the URI of the remote OWL endpoint.
+    \item[Query] Following, between the curly brackets, will be a Manchester OWL
+    Syntax query referring to relevant objects to be returned to the query.
+\end{description}
+
+\section{Testing}
+
+\section{Discussion}
+
+\section{Project Deliverables}
+
+\begin{itemize}
+  \item \emph{Specification} - This will involve a description of the language additions 
+  and their syntax in a 'specification'-type format. 
+  \item \emph{Implementation} - An implementation of the above addition in the
+  form of an addition to a piece of software which iplements a SPARQL server to
+  allow for the running of the queries detailed above.
+  \item \emph{Working Demonstration} - In the form of a working SPARQL endpoint
+  and an OWLlink endpoint, with the ability for the former to run queries on the
+  latter through the previously developed language extension.
+  \item \emph{Tests} - A couple of tests (either manual or automatic) which
+  prove the extensions as working.
+  \item \emph{Progress Report} - This involves a mid-period report which covers
+  an overview of the technologies learned, and details on the specification and 
+  implementation of the extension to SPARQL.
+  \item \emph{Paper} - Scientific paper describing the results of the research
+  project.
+  \item \emph{Final Report} - Report covering the entire project, including
+  a full project description, background, impact and significance, 
+  implementation process, documentation and evaluation of final progress.
+\end{itemize}
+
+\section{Conclusion}
+
+* Future
+* Directions for the project itself
+* What can build on it
+
+\begin{thebibliography}{9}
+
+\bibitem{semweb}
+  Tim Berners-Lee et al,
+  \emph{The Semantic Web}.
+  Feature Article, Scientific American
+  May 2001.
+    \\  
+    \emph{This article is definitive in describing the initial idea and goals for the
+    'Semantic Web,' by the project's founders. It provides the 'vision' for the
+    semantic web and is therefore an underlying background for all of the
+    technologies used in this project.}
+
+\bibitem{rdfprimer}
+ Tim Berners-Lee et al,
+ \emph{RDF Primer}.
+ W3C,
+ 2004.
+   \\ 
+   \emph{This W3C 'primer' document provides a detailed description of the RDF
+   datastore - its uses, significance and implementation details. Important to
+   gain an understanding of the data format which will be one of the two
+   technologies being connected.}
+
+\bibitem{sparql}
+  Eric Prud'hommeaux, Andy Seaborne,
+  \emph{SPARQL Query Language for RDF}.
+  W3C,
+  January 2008.
+    \\ 
+    \emph{This specification describes the SPARQL query language, used for
+    interaction with RDF datastores. Good for a background and details of 
+    the technology I will be extending.}
+
+\bibitem{desclogic}
+ Franz Baader, Deborah L. McGuinness, Daniele Nardi, Peter F. Patel-Schneider,
+ \emph{The Description Logic Handbook - Theory, Implementation and Actions}.
+ Cambridge University Press,
+ March 2003.
+   \\ 
+   \emph{This book provides the background for description logic, which is the
+   grounding for the OWL language.}
+
+\bibitem{owlprimer}
+  Pascal Hitzler et al,
+  \emph{OWL 2 Web Ontology Language Primer (Second Edition)}.
+  W3C,
+  December 2012.
+  \\ 
+  \emph{This is a primer on the language which is going to be implemented in
+  SPARQL. Good for understanding the logic and usability.}
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,68 @@
+- Develop a computational strategy for determining the utility of model organism
+  phenotypes for discovering targets for known drugs
+- To establish an approach and resource that allows researchers to explore model
+  organism phenotypes for drug repurposing
+
+1. Can a similarity between drug effect profiles and model organism phenotypes
+provide information about drug targets
+2. Can this approach be used to identify novel targets and novel indications for
+known drugs 
+
+Animals
+    * Rat
+    * Mouse
+    * Zebrafish
+
+1. Integrate drug effect and model organism phenotype data from public databases
+2. Determine the similarity between drug effects and model organism phenotypes
+3. Evaluate, on a system-wide scale, whether similarity between animal models
+and drug effect profiles can provide insights into drug-target relationships
+4. Implement a resource that summarises and visualises the results to
+researchers working on animal models and pharmacology
+
+- Drug repurposing a major research focus of funding bodies in the UK and
+  wordwide.
+
+Animal model phenotype data is freely available from model organism databases:
+    * Mouse Genome Informatics (MGI)
+    * Zebrafish Information Network (ZFIN)
+    * Rat Genome Database
+    * Worm, Flybase and Saccharomyces Genome Database
+Freely available information about drugs and modes of action from:
+    * DrugBank
+    * Pharmacogenomics Knowledge Base (PharmaGKB)
+    * Theraputic Target Database
+    * STITCH data
+Data about drug effects from:
+    * SIDER database
+    * Offsides database
+
+- Drug effects are observable cellular, organismal and behavioural effects of a
+  drug on an organism, which are described by generalised ontologies such as
+  Human Phenotype Ontology (HPO) 
+- Animal model phenotypes are described using species-specific ontologies such
+  as Mammalian Phenotype Ontology (MP) for rat and mouse phenotypes.
+
+- Semantic similarities
+
+- Similarity between drug-induced phenotypes and animal-model knockout
+  phenotypes
+
+Journals:
+For this purpose, we will test the following hypotheses: (a) Can a similarity
+between drug effect profiles and model organism phenotypes provide information
+about drug targets? and (b) Can this approach be used to identify novel targets
+and novel indications for known drugs? In this proposal, we will primarily focus
+on 
+
+- International Semantic Web Conference
+- Bioinformatics
+- Nucleic Acid Research
+- Plos Computational Biology
+- Plos One
+- Genome Biology
+- BMC Bioinformatics
+- BMC Systems Biology
+- Journal of Biomedical Semantics 
+
+
