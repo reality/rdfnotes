@@ -34,6 +34,8 @@ title=\lstname,                 % show the filename of files included with \lsti
 
 \pagebreak
 
+2280
+
 \section{Introduction}
 
 My project is concerned with interlinking two semantic web technologies,
@@ -62,6 +64,10 @@ result-set.
 Furthermore, I will endeavour to create a working implementation of this
 addition - which will allow a demonstration of the system. This will require
 some research into the various technologies currently available.
+
+Another particular focus of my resulting work, beyond the primary functionality
+will be in creating software that is easy to maintain, extend and modify - in
+the spirit of open data and the semantic web.
 
 Upon finishing the research project, the findings will be presented in the form
 of a scientific paper presenting the specification of the addition to the
@@ -240,6 +246,8 @@ Syntax queries to remote reasoners and retrieve relevant classes for use.
 Therefore, another problem is providing a web-based solution for human-input OWL
 queries over multiple ontologies through Web. 
 
+* semantic web lacking simple software
+
 \section{Design and Implementation}
 
 My solution to the given problems are to develop an extension to the SPARQL
@@ -249,6 +257,8 @@ included in the SPARQL resultset. This will require both development of the
 language extension and the queriable OWL endpoint.
 
 \subsection{SPARQL Extension}
+
+\subsubsection{Design}
 
 As described in the State of The Art, there is already a SERVICE keyword
 included in the SPARQL language which provides a good model for sending a text
@@ -262,7 +272,7 @@ Therefore, my software will add an 'OWL' block to the SPARQL language, which
 uses a similar syntactic pattern to the SERVICE keyword.
 
 \begin{lstlisting}
-OWL <http://realispicio.us:9090> {
+OWL SILENT <http://realispicio.us:9090> {
     Pizza and hasTopping some FishTopping
 }
 \end{lstlisting}
@@ -273,11 +283,157 @@ There are three properties to the above query:
     \item[OWL] The OWL keyword will designate the beginning of an OWL block
     denoting the beginning of the description for a query to be sent to a remote
     OWL endpoint.
+    \item[SILENT] This is an optional keyword, which if included will mean that
+    no results are integrated if a query fails but the query will continue,
+    while if it isn't set and a query fails the SPARQL query will be halted and
+    return an error message.
     \item[IRI] The IRI, contained between angled brackets following the OWL
     keyword, will define the URI of the remote OWL endpoint.
     \item[Query] Following, between the curly brackets, will be a Manchester OWL
     Syntax query referring to relevant objects to be returned to the query.
 \end{description}
+
+Upon parsing the OWL block the syntax will send a query to an OWL reasoner
+endpoint (described next in this section), and integrate the returned results
+into the query. 
+
+\subsubsection{Implementation}
+
+In researching the implementation of the OWL block addition to SPARQL, the
+initial thoughts were to perform this by actually extending the language itself.
+To do this, the only seemingly viable option was to extend Apache Jena, which is
+a major and widely used semantic web framework written in Java which includes the 
+ARQL SPARQL compiler. 
+
+The original plan was to build the extra syntax into ARQL in Jena, and
+distribute a modified version of the software while requesting the changes be
+merged with the main codebase.
+
+However, after further investigation this approach was deemed unsuitable because
+of the perceived inextensibility of the ARQL codebase, which makes use of a
+large amount of magic numbers and goes largely undocumented. [am I allowed to
+say this?]
+
+Therefore, a simpler approach was taken - to extend a library which sends a
+SPARQL query to a SPARQL endpoint by preprocessing it to find and run OWL
+blocks, then replacing the block with the results inline. The workflow of the
+script will be the following:
+
+\begin{enumerate}
+    \item Input the SPARQL query into the script.
+    \item Scan the script for OWL blocks (syntax described above).
+    \item Run any OWL queries.
+    \item Replace the OWL block with the resultset from the OWL query.
+    \item Run the SPARQL query.
+    \item Return the full resultset.
+\end{enumerate}
+
+In terms of inputting the SPARQL query into the processing script, it will
+support being run both from the command line and over the web, by checking how
+it's being run. From there, it will gain the input run from the command line
+either designated in plaintext in the arguments, or from a file named in the
+arguments; if run over the web, it will accept a POST parameter including the
+query sent from a simple web interface also implemented by me (described later).
+
+Scanning the script for occurences of OWL blocks will be done with a simple
+Regex to build an array of all matches and involved parameters.
+
+It will use these parameters to run each OWL block against the given OWL 
+endpoint.
+
+These results will then replace the OWL block in-place in the SPARQL query,
+using the VALUES inline data syntax.
+
+Once these have all been performed, the SPARQL query will be run against a
+SPARQL endpoint and the result returned to the user using the appropriate method.
+
+As an example, a simple SPARQL query including an OWL block like so (which
+simply asks for classes related to the adaxial cell in a zebrafish ontology):
+
+\begin{lstlisting}
+SELECT * WHERE {}
+OWL <http://realispicio.us:9090> {
+    'adaxial cell'
+}
+\end{lstlisting}
+
+Would first be processed to a SPARQL query string containing the OWL block
+replaced by a VALUES block containing the results of the query:
+
+\begin{lstlisting}
+SELECT * WHERE {} 
+VALUES (?iri ?id) { 
+    ( http://purl.obolibrary.org/obo/#ZFA_0009000  ZFA_0009000 ) 
+    ( http://www.w3.org/2002/07/owl#Nothing  Nothing )
+}
+\end{lstlisting}
+
+\subsection{OWL Endpoint}
+
+\subsubsection{Design}
+
+The OWL endpoint will be a simple HTTP REST-like API which wraps code around an
+OWL reasoner. The software will load a set of ontologies which any queries given
+to the server will be run against, run the reasoner against them, and then set
+up a simple server to accept Manchester OWL Syntax requests and return the
+results in a machine-readable format.
+
+\subsubsection{Implementation}
+
+The initial stages of the program startup will be the following:
+
+\begin{enumerate}
+    \item Load given ontologies into an ontology manager. 
+    \item Perform reasoning on a set of ontologies and store the results.
+    \item Start a HTTP API listener with code to handle any queries.
+\end{enumerate}
+
+The workflow of a request made to the server will be as follows. 
+
+\begin{enumerate}
+    \item Retrieve Manchester OWL Syntax query.
+    \item Convert the Manchester OWL Syntax query to a class expression (able to
+    be queried against an ontology).
+    \item Retrieve relevant objects from the ontologies.
+    \item Serialise these objects in a machine-readable format and return them 
+    to the collector.
+\end{enumerate}
+
+OWLAPI will be used to handle ontologies, including the reasoning, Manchester
+OWL Syntax conversion and class querying. OWLAPI is a Java library for
+manipulating OWL ontologies, and is the reference implementation for the OWL
+standard from W3C. Many other OWL-involved technologies use this framework,
+including OWLLink and Jena's OWL components.
+
+Alternative approaches may have been using various bespoke reasoner libraries
+for reasoning, along with either writing my own code or finding another library
+to convert Manchester OWL Syntax into a class expression. However, this would
+require much extra work and misses a major advantage of OWLAPI in that it
+supports most major reasoners (e.g. FaCT++, HermiT, Pellet), making the software
+more universally applicable without extra work.
+
+For the server software I decided to use Jetty, since my research showed that
+this was about the simplest HTTP server library available in Java which
+implements the required functionality. It is well documented, and uses many
+in-built Java API classes which works towards keeping the codebase light and
+easily extensible by others. 
+
+OWLLink could have perhaps been utilised to create a solution. OWLLink is a
+piece of research software which implements a machine-usable API for OWL
+reasoners. However, this means it does not accept Manchester OWL Syntax - this
+could be remedied by parsing Manchester OWL Syntax into a class description
+understood by an OWLLink server on the clientside, though I believe this would
+be bad design, creating extra work for any implementations. 
+
+It was a realm of investigation to extend the OWLLink API with a Manchester OWL 
+Syntax parser, but such solutions were actually less efficient than simply using
+Jetty and OWLAPI - cutting out the middleman (OWLLink using OWLAPI itself).
+
+* not extensible
+* should be on the side of the server
+
+* Insert class diagram
+* Workflow
 
 \section{Testing}
 
