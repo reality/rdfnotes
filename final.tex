@@ -34,7 +34,7 @@ title=\lstname,                 % show the filename of files included with \lsti
 
 \pagebreak
 
-2280
+4308
 
 \section{Introduction}
 
@@ -75,8 +75,6 @@ language, its impact and its uses.
 
 \section{State of The Art in The Semantic Web}
 
-\subsection{The Semantic Web}
-
 The Semantic Web is a set of technologies and methodologies suitable for
 generalised data expression, transmission and processing over the World Wide
 Web. Before this, up until the Semantic Web's philosophical beginnings in
@@ -98,7 +96,12 @@ automation and service intercommunication serving the human lifestyle, backed by
 these data formats which allow software to easily traverse the totality of
 available data and process it in a meaningful manner. 
 
-\subsection{RDF}
+To move forward and implement the Semantic web, we have since that date seen the
+production of a number of technologies moving towards this goal.
+
+\subsection{Technologies}
+
+\subsubsection{RDF}
 
 One of the primary technologies used to represent this machine-workable data on
 the web is the Resource Description Framework (RDF), which are a set of
@@ -122,26 +125,108 @@ Predicate and an Object:
 For example, in the simplest terms a statement which defines the name of the author of
 this document might take the form:
 
+\begin{lstlisting}
 http://users.aber.ac.uk/lus11/dissertation has an author whose value is Luke
 Slater.
+\end{lstlisting}
 
 In which the subject is \emph{http://users.aber.ac.uk/lus11/dissertation}, the
 predicate is \emph{author} and the object is \emph{Luke Slater}.
-
-RDF information is commonly stored, transmitted and worked with using the
-RDF/XML format, which is an expression of the graph data structures in the
-eXtensible Markup Language (XML) - a language designed to store and encode
-documents (as opposed to HTML, which is for displaying data). Alternatively, and
-in the remainder of this document, the Turtle format is used to communicate RDF
-in a format which is both computer and human readable.
 
 Usually, URIs are used to identify objects, subjects and predicates because they
 allow them to be fully-fledged resources and in using already-defined
 vocabularies one can avoid using multiple strings to refer to the same thing.
 
-So, a full example
+The actual RDF datastore, may look like the following:
 
-\subsection{SPARQL}
+\begin{lstlisting}
+<?xml version="1.0"?>
+
+<rdf:RDF
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:si="http://www.w3schools.com/rdf/">
+
+<rdf:Description rdf:about="http://users.aber.ac.uk/lus11/dissertation">
+  <si:author>Luke Slater</si:author>
+</rdf:Description>
+
+</rdf:RDF> 
+\end{lstlisting}
+
+RDF information is commonly stored, transmitted and worked with using the
+RDF/XML format, which is an expression of the graph data structures in the
+eXtensible Markup Language (XML) - a language designed to store and encode
+documents (as opposed to HTML, which is for formatting data). It may also be
+stored in a JSON (which is a notation more suited for native key-value stores),
+but what these all hold in common are their ease of computer-operability; such
+data expression formats are widely adopted and there exist hundreds of thousands
+of applications which rely on 
+
+While XML and simliar already exist, and allow for easy storage, transmission 
+and manipulation by machines, there is an issue in that applications which use
+it often define their own schemas and constructs for data description. This is
+useful for the application itself and for applications which subscribe to its
+data schema, but requires extra work for applications which wish to use it.
+
+While key value data stores have many advantages over Relational Database
+Management Systems (RDBMS), they have the advantage that for certain datatypes,
+for example a 'date' are centrally configured and understood by all instances of
+that database driver (MySQL, for example). Key-value data is much more freeform,
+consisting of nothing but a key and a value. 
+well as extra documentation being required for each piece of software to
+describe its data format and even the types of data. 
+
+RDF strives to solve these problems, creating a universal and general
+specification for resource description, by providing a known data format with
+widely known vocabularies included in predicates within the data to describe 
+the datatypes within it - the existence and extensibility of said vocabularies 
+meaning it can universally define and describe much more complicated and 
+specific datatypes than can RDBMS systems.
+
+* triples
+
+\subsubsection{OWL Ontologies}
+
+An ontology is a formal representation of a set of concepts and their
+interrelationships, types and hierarchical standings. RDF is rather naturally
+suited to storing this type of data, being that it represents a graph, however
+technologies such as OWL (The Web Ontology Language) have been developed
+post-RDF to provide additional suitability and a greater featureset for this
+paradigm of knowledge representation.
+
+Despite the misleading acronym, OWL itself actually includes a large amount of
+different individual languges depending on the version of the specification used
+and the set of features required from the knowledge representation.
+
+Both ontologies and OWL ontologies specifically include a set of classes, which 
+describe objects within the appropriate domain (much like a declarative RDF 
+description of an object with a set of predicates and values). It also contains
+a set of axioms, or constraints, which describe the interrelationships between
+the classes.
+
+The set of available axioms, constraints and relationships available in OWL
+ontologies allow it to effectively model description logic\cite{desclogic}. 
+
+** more about description logic.
+
+This is supported by semantic reasoners, which are pieces of software designed
+to evaluate the set of axioms between classes for logical consistency. OWL
+succeeds many previous attempts at ontological representation due to the
+existence of complete and terminating reasoners which can fully evaluate every
+consequence of the logic which exists in an ontology, allowing larger and more
+complicated ontologies to exist while continuing to contain validated 
+consistent meaning.
+
+* Describe OWL
+* Description Logic
+* Semantic reasoners
+
+\subsubsection{SPARQL}
+
+Previously, languages used for the representation of various types of ontologies
+were described, these are designed to be interacted with by machines - however,
+a number of technologies also exist for human-interaction with the datastores
+including querying and data manipulation.
 
 SPARQL (SPARQL Protocol And RDF Query Language) is a query language similar to
 SQL which allows the querying and manipulation of RDF (and similar) datastores.
@@ -183,10 +268,105 @@ being Virtuoso. It also means that simple online interfaces can be developed for
 working with SPARQL. These qualities mean that SPARQL makes RDF very universally
 available for use.
 
-\subsection{OWL Ontologies}
+\subsubsection{Manchester OWL Syntax}
 
-* Describing ontologies
-* Describe OWL
+Manchester OWL Syntax is a class of OWL language which is designed to be
+human-friendly, it can be used to represent full ontologies - though a certain
+few applications such as Protoge utilise the simple syntax to allow users to
+return classes relevant to a given expression.
+
+By default, the syntax deals in IRIs, however implementations may be modified to
+deal in labels as a short-form for an even more compact syntax.
+
+\subsection{Frameworks and Implementations} 
+
+\subsubsection{Jena}
+
+Jena is a large semantic web framework for Java, which provides an API for
+reading several technologies including RDF and OWL, and its main uses are
+the extraction of data from various database systems and re-representing them in
+an RDF format. 
+
+It includes ARQ, which is an implementation of the SPARQL query language
+However, while Jena is a large and well supported application, it suffers 
+from a lack of extensibility, evidenced by a very large and widely undocumented 
+codebase. This means that it's rather difficult to use its implementation of
+SPARQL for additions or modifications to the syntax.
+
+\subsubsection{SPARQL Endpoints}
+
+\subsubsection{OWLAPI}
+
+OWLAPI is a Java library framework for manipulating OWL ontologies for a number of
+purposes, and is the reference implementation for the OWL standard from W3C. 
+It also allows users to load, manipulate and reason with OWL ontologies and has 
+support for several manners of OWL languages and syntaxes, converting these to 
+normative OWL class expressions. It also supports reasoning ontologies with all
+of the major semantic reasoners (FaCT++, HermiT, Pellet etc).
+
+Many other OWL-involved technologies use this framework, including OWLLink and Jena's 
+OWL components. As a client library it is well supported and well documented
+(with a full set of JavaDoc), with much sample code available.
+
+There are alternatives for client libraries involved in manipulating OWL
+ontologies, many individual reasoners include their own libraries - however the
+advantage of OWLAPI is such that it supports all of the reasoners, improving
+the level of universal application and reduction in work for extension in
+functionality; such libraries also do not support the full set of OWL languages,
+including Manchester OWL Syntax which is a human-interactable language for
+querying and representing OWL ontologies.
+
+\subsubsection{OWLLink and OWLLink API}
+
+OWLLink is a specification which defines a machine-usable API for OWL reasoners,
+the reference implementation for which is OWLLink API. The OWLLink API provides
+client applications using OWLAPI to access remote reasoners through providing a
+server adapter to an OWLAPI-abstracted reasoner. 
+
+The disadvantage of this software is that it requires the client application
+to use OWLAPI, or otherwise requires a complicated XML strucuture for the
+request of data - a normalised expression of an OWL class expression. This
+represents somewhat of a lock-in for the client software. 
+
+Additionally, it does not accept Manchester OWL Syntax for queries - this could 
+be remedied by parsing Manchester OWL Syntax into a class description understood 
+by an OWLLink server on the clientside (a provision made available by OWLAPI).
+
+Alternatively, a wrapper around the OWLLink server could be made, using OWLAPI
+to convert the Manchester OWL Syntax to the class expression, then passing it to
+the OWLLink server. However, this is rather inefficient as it would require an
+extra external HTTP endpoint. The approach of creating a new piece of software 
+based on OWLAPI with a simple HTTP server would be, in effect, cutting out the 
+middleman.
+
+\subsection{Uses and Impact}
+
+As these technologies and implentations exist, they have mostly been utilised
+for scientific purposes.
+
+One thing that seems lacking in implementations of semantic web technologies as
+they exist is that the major implementations are all rather large and opaque
+Java libraries - this being a language which generally requires a lot of
+boilerplate - additionally, transmission formats are commonly XML, which also
+requires extra overhead in processing when compared to abstract key-value
+storage formats such as JSON. 
+
+Conversely, underlying technologies and applications on the web have meanwhile 
+been moving towards use of lightweight frameworks and languages. Modern applications 
+have been opting for abstract key-value stores such as Redis, which suffers from
+a lack of additional features available from ontologies. 
+
+Transmission of data on the web tends to favour simple REST APIs which feature 
+simple HTTP requests with parameters, instead of the complicated XML structures 
+necessary to query data from OWLLink servers for example. On the other hand, the
+previously discussed SPARQL data endpoints provide a simple HTTP interface for
+SPARQL queries, and I believe the effectiveness of the availability of these
+simpler and more accessible technologies can be seen in the difference in uptake
+between SPARQL and OWLLink.
+
+Therefore, I believe it may be that the lack of takeup of knowledge-representation systems
+for front-end applications may be the down to the lack of lightweight libraries, 
+services and frameworks available for working with them.
 
 \section{Problem Statement}
 
@@ -385,6 +565,8 @@ The initial stages of the program startup will be the following:
 \begin{enumerate}
     \item Load given ontologies into an ontology manager. 
     \item Perform reasoning on a set of ontologies and store the results.
+    \item Generate a list of short-form labels for the classes in the
+    ontologies.
     \item Start a HTTP API listener with code to handle any queries.
 \end{enumerate}
 
@@ -400,34 +582,13 @@ The workflow of a request made to the server will be as follows.
 \end{enumerate}
 
 OWLAPI will be used to handle ontologies, including the reasoning, Manchester
-OWL Syntax conversion and class querying. OWLAPI is a Java library for
-manipulating OWL ontologies, and is the reference implementation for the OWL
-standard from W3C. Many other OWL-involved technologies use this framework,
-including OWLLink and Jena's OWL components.
-
-Alternative approaches may have been using various bespoke reasoner libraries
-for reasoning, along with either writing my own code or finding another library
-to convert Manchester OWL Syntax into a class expression. However, this would
-require much extra work and misses a major advantage of OWLAPI in that it
-supports most major reasoners (e.g. FaCT++, HermiT, Pellet), making the software
-more universally applicable without extra work.
+OWL Syntax conversion and class querying. 
 
 For the server software I decided to use Jetty, since my research showed that
 this was about the simplest HTTP server library available in Java which
 implements the required functionality. It is well documented, and uses many
 in-built Java API classes which works towards keeping the codebase light and
 easily extensible by others. 
-
-OWLLink could have perhaps been utilised to create a solution. OWLLink is a
-piece of research software which implements a machine-usable API for OWL
-reasoners. However, this means it does not accept Manchester OWL Syntax - this
-could be remedied by parsing Manchester OWL Syntax into a class description
-understood by an OWLLink server on the clientside, though I believe this would
-be bad design, creating extra work for any implementations. 
-
-It was a realm of investigation to extend the OWLLink API with a Manchester OWL 
-Syntax parser, but such solutions were actually less efficient than simply using
-Jetty and OWLAPI - cutting out the middleman (OWLLink using OWLAPI itself).
 
 * not extensible
 * should be on the side of the server
@@ -475,50 +636,33 @@ Jetty and OWLAPI - cutting out the middleman (OWLLink using OWLAPI itself).
   \emph{The Semantic Web}.
   Feature Article, Scientific American
   May 2001.
-    \\  
-    \emph{This article is definitive in describing the initial idea and goals for the
-    'Semantic Web,' by the project's founders. It provides the 'vision' for the
-    semantic web and is therefore an underlying background for all of the
-    technologies used in this project.}
 
 \bibitem{rdfprimer}
  Tim Berners-Lee et al,
  \emph{RDF Primer}.
  W3C,
  2004.
-   \\ 
-   \emph{This W3C 'primer' document provides a detailed description of the RDF
-   datastore - its uses, significance and implementation details. Important to
-   gain an understanding of the data format which will be one of the two
-   technologies being connected.}
 
 \bibitem{sparql}
   Eric Prud'hommeaux, Andy Seaborne,
   \emph{SPARQL Query Language for RDF}.
   W3C,
   January 2008.
-    \\ 
-    \emph{This specification describes the SPARQL query language, used for
-    interaction with RDF datastores. Good for a background and details of 
-    the technology I will be extending.}
 
 \bibitem{desclogic}
  Franz Baader, Deborah L. McGuinness, Daniele Nardi, Peter F. Patel-Schneider,
  \emph{The Description Logic Handbook - Theory, Implementation and Actions}.
  Cambridge University Press,
  March 2003.
-   \\ 
-   \emph{This book provides the background for description logic, which is the
-   grounding for the OWL language.}
 
 \bibitem{owlprimer}
   Pascal Hitzler et al,
   \emph{OWL 2 Web Ontology Language Primer (Second Edition)}.
   W3C,
   December 2012.
-  \\ 
-  \emph{This is a primer on the language which is going to be implemented in
-  SPARQL. Good for understanding the logic and usability.}
+
+Example OWLLink query:
+http://owllink.org/owllink-httpxml-20091116/additional-examples/owllink-example-ClassQueries-request-20091116.xml
 
 \end{thebibliography}
 
