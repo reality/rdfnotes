@@ -34,7 +34,7 @@ title=\lstname,                 % show the filename of files included with \lsti
 
 \pagebreak
 
-4308
+6312
 
 \section{Introduction}
 
@@ -275,8 +275,14 @@ human-friendly, it can be used to represent full ontologies - though a certain
 few applications such as Protoge utilise the simple syntax to allow users to
 return classes relevant to a given expression.
 
-By default, the syntax deals in IRIs, however implementations may be modified to
-deal in labels as a short-form for an even more compact syntax.
+\begin{lstlisting}
+Pizza and hasTopping some FishTopping
+\end{lstlisting}
+
+An example of how Manchester OWL Syntax for querying classes is given above, it
+succinctly describes the class involved (Pizza) and then the constraint that
+class must match (hasTopping some FishTopping), with Pizza classes having a
+Topping subclass which may be of the instance FishTopping.
 
 \subsection{Frameworks and Implementations} 
 
@@ -316,6 +322,16 @@ functionality; such libraries also do not support the full set of OWL languages,
 including Manchester OWL Syntax which is a human-interactable language for
 querying and representing OWL ontologies.
 
+\subsubsection{Protégé}
+
+Protégé is an open source project which provides a desktop-based graphical user
+interface for editing, building and reasoning with ontologies, which supports
+the development of plugins. It is considered the premier tool for working with
+OWL ontologies within the scientific community.
+
+One of its interesting features is that of a novel use of Manchester OWL Syntax
+to query classes and return those relevant (described above).
+
 \subsubsection{OWLLink and OWLLink API}
 
 OWLLink is a specification which defines a machine-usable API for OWL reasoners,
@@ -342,7 +358,66 @@ middleman.
 \subsection{Uses and Impact}
 
 As these technologies and implentations exist, they have mostly been utilised
-for scientific purposes.
+for scientific purposes. 
+
+An example of a common use for OWL ontologies is that of describing animal or
+plant models using the descriptive logic axioms provided by OWL. A collection 
+of biological ontologies can be found at OboFoundry\cite{obofoundry}, examples
+including Zebrafish models and a full plant ontology model. In working with
+these ontologies the previously described Protege application is primarily used. 
+
+These are being used for example to examine biological and drug data for medical
+purposes\cite{humontology}. One particular realm of discovery is drug discovery,
+mining existing information on the semantic web to predict the results of drugs,
+and eventually predicting and finding new targets and indications for existing
+drugs\cite{semwebdiscoverty}.
+
+A good example of a large RDF(S) dataset is DBPedia, which aims to extract
+information from the online encyclopaedia website Wikipedia and provide it in a
+structured and machine-processable format, available for free on the web. At the
+time of writing, it had collected information on more than four million objects
+and had collected more than 470million 'facts' overall.
+
+An important thing to note about this dataset is the grand effort which is made
+to make the information freely and easily available in a number of manners and
+using a number of different technologies. There is a SPARQL endpoint available
+for querying, along with full database downloads and a simple endpoint for
+retriving information about particular subjects in a number of formats (JSON,
+XML, N-Triples etc).
+
+The underlying technology's ability to provide simple data access over the Web
+means that DBPedia can be and is already used for a number of practical
+applications.\cite{dbpedia-uses}
+
+\section{Problem Statement}
+
+\subsection{Data Integration}
+
+The issue with the Semantic Web as it currently exists is that while there is a
+lot of data stored in machine-processable formats, there is a lot of information 
+existing in different data models (RDF and OWL ontologies, in respects to this project). 
+This means it becomes somewhat difficult to integrate data between said models 
+if they are representing similar data in different ways.
+
+There is already some provision for this, as explained in the previous section - 
+SPARQL does actually allow data to be queried from an OWL ontology, loading a full 
+list of objects in an ontology designated by an IRI and then being able to query 
+it in an RDF expression. However, while this is useful in some cases, it misses 
+two major advantages of OWL ontologies: the performance of semantic reasoning
+upon the dataset, and the ability to query the data in a native manner (using 
+Manchester OWL Syntax).
+
+Therefore the problem in this case is developing a manner by which to integrate
+data stored in RDF and OWL formats without compromising the endemic qualities of 
+each model through doing so.
+
+The previously mentioned drug discovery purposes for semantic web technologies
+initially involve integrating data which may exist in different schemas or
+different database systems to make use of the data.\cite{semwebdiscovery}.
+
+* Why it's useful
+
+\subsection{Human-interactable OWL Querying Over The Web}
 
 One thing that seems lacking in implementations of semantic web technologies as
 they exist is that the major implementations are all rather large and opaque
@@ -367,32 +442,6 @@ between SPARQL and OWLLink.
 Therefore, I believe it may be that the lack of takeup of knowledge-representation systems
 for front-end applications may be the down to the lack of lightweight libraries, 
 services and frameworks available for working with them.
-
-\section{Problem Statement}
-
-\subsection{Data Integration}
-
-The issue with the Semantic Web as it currently exists is that while there is a
-lot of data stored in machine-processable formats, there is a lot of information 
-existing in different data models (RDF and OWL ontologies, in respects to this project). 
-This means it becomes somewhat difficult to integrate data between said models 
-if they are representing similar data in different ways.
-
-There is already some provision for this, as explained in the previous section - 
-SPARQL does actually allow data to be queried from an OWL ontology, loading a full 
-list of objects in an ontology designated by an IRI and then being able to query 
-it in an RDF expression. However, while this is useful in some cases, it misses 
-two major advantages of OWL ontologies: the performance of semantic reasoning
-upon the dataset, and the ability to query the data in a native manner (using 
-Manchester OWL Syntax).
-
-Therefore the problem in this case is developing a manner by which to integrate
-data stored in RDF and OWL formats without compromising the endemic qualities of 
-each model through doing so.
-
-* Why it's useful
-
-\subsection{Human-interactable OWL Querying Over The Web}
 
 As described in the State of The Semantic Web, there are two categories of
 languages used to represent and interact with the data: human-interactable and
@@ -570,7 +619,7 @@ The initial stages of the program startup will be the following:
     \item Start a HTTP API listener with code to handle any queries.
 \end{enumerate}
 
-The workflow of a request made to the server will be as follows. 
+The workflow of a request made to the server will be as follows:
 
 \begin{enumerate}
     \item Retrieve Manchester OWL Syntax query.
@@ -598,36 +647,139 @@ easily extensible by others.
 
 \section{Testing}
 
-\section{Discussion}
-
-\section{Project Deliverables}
-
-\begin{itemize}
-  \item \emph{Specification} - This will involve a description of the language additions 
-  and their syntax in a 'specification'-type format. 
-  \item \emph{Implementation} - An implementation of the above addition in the
-  form of an addition to a piece of software which iplements a SPARQL server to
-  allow for the running of the queries detailed above.
-  \item \emph{Working Demonstration} - In the form of a working SPARQL endpoint
-  and an OWLlink endpoint, with the ability for the former to run queries on the
-  latter through the previously developed language extension.
-  \item \emph{Tests} - A couple of tests (either manual or automatic) which
-  prove the extensions as working.
-  \item \emph{Progress Report} - This involves a mid-period report which covers
-  an overview of the technologies learned, and details on the specification and 
-  implementation of the extension to SPARQL.
-  \item \emph{Paper} - Scientific paper describing the results of the research
-  project.
-  \item \emph{Final Report} - Report covering the entire project, including
-  a full project description, background, impact and significance, 
-  implementation process, documentation and evaluation of final progress.
-\end{itemize}
-
 \section{Conclusion}
 
-* Future
-* Directions for the project itself
-* What can build on it
+\subsection{Summary of Contributions}
+
+Implemented a demonstration of an extension to the SPARQL language to allow
+remote querying of a set of OWL ontologies at
+a given data endpoint using Manchester OWL Syntax. Relevant results are then
+included in the OWL resultset and can
+interact with the rest of the query as a regular 'list' of data. The script can
+either be used from the command line or
+through the web.
+
+Implemented a basic Web front-end for making SPARQL queries, designed to make
+available the previously noted implementation of
+the OWL querying functionality on the Web.
+
+Created a simple REST Web API to constitute an OWL data endpoint for ontology
+querying, with a similar pattern to SPARQL
+endpoints. It allows a user to make a Manchester OWL Syntax query, describing a
+set of relevant classes, which are then
+matched against a number of in-built and reasoned ontologies, then returned in
+JSON format.
+
+\subsection{Future Work}
+
+\subsubsection{Re-implement current SPARQL functionality in other languages}
+
+To increase the universal availability of this functionality, it would be a good
+idea to implement it in other languages which
+have a SPARQL library. The design pattern for the base OWL block functionality
+is rather simple so it would be easy to port
+to other languages either by myself or someone who needs it for a specific
+purpose with a specific set of technologies. PHP
+was chosen initially since the focus was on Web availability, and most web-based
+SPARQL endpoints which humans interact with
+are using PHP.
+
+\subsubsection{Extend actual SPARQL Syntax}
+
+Eventually, it would be a superior solution to actually extend the SPARQL
+language itself - both by extension of the SPARQL
+specification and through an extension in the reference implementation of SPARQL
+(ARQ); this would increase visibility of the
+project, as well as working towards the new features being more widely
+supported.
+
+\subsubsection{Combination with SERVICE}
+
+As previously noted, the pattern between the SERVICE and OWL keywords are very
+similar- namely, they both send a HTTP request and
+use the results in the query. Because of this, it may be worth attempting to
+extend the implementation of the SERVICE keyword such
+that it supports OWL endpoints as well as SPARQL endpoints. The advantages of
+this would be syntactic efficiency, as well as providing
+a reasonable and extendable framework for supporting other such simple endpoints
+in future (integration from other types of data).
+
+\subsubsection{Data Integration From Other Sources}
+
+While connecting OWL and RDF datastores in this manner already allows for a lot
+of new
+works to be done, there are other semantic data
+formats which currently do not support easy data integration. I think that
+SPARQL serves
+as a good base for any further data integration,
+as a good base for any further data integration,
+given its wide adoption and currently existing support for many different types
+of data.
+
+One particular use of this could be to undertake a project to use this method of
+data
+integration among others to explore the the phenotypic similarites between "loss
+of
+function" mutations from gene knockout animal models and the inhibition of
+protein
+functions by existing drugs.
+
+Through doing this, one may potentially discover novel drug actions and
+indications -
+with the furhter potential to eventually find new treatments for currently
+untreatable
+conditions; an approach which may be seen as particularly favourable in recent
+times
+due to the heightening cost of research and development of entirely new drugs.
+
+It would be achieved by first integrating drug effect and model organism
+phenotype data
+from public databases through various currently existing and newly developed
+data
+integration techniques, then determine any similarities between drug effects and
+organism phenotypes. Once these are identified, one would determine whether the
+observed similarities can provide insights into drug-target relationships.
+
+TODO examples
+
+* More practical uses for the implemented functionality
+
+\subsubsection{More Functionality in the OWL API}
+
+The current implementation of the OWL API endpoint is very simple, designed as
+what is mainly a proof of concept. As mentioned in the design
+section, the API currently searches objects over a set of default ontologies
+found at the\cite{obofoundry}. While this provides a useful set of
+ontologies for queries, it is somewhat inflexible. Currently, if a user wishes
+to query an ontology which isn't included in the endpoint, they
+would have to download a copy of the software and modify the list of ontologies
+- then running it themselves.
+
+To remedy this, I would plan on keeping the current functionality in terms of a
+default set of ontologies, but implement an additional query
+parameter which allows the user to list a set of URIs pointing at ontologies to
+reason and query. While this would be a useful feature, it
+presents several design challenges - such as security (care would have to be
+taken so that a user could not break the server by pointing it
+at some malicious form of broken ontology, or crash the software by passing an
+ontology too large for the computer to handle), and additionally
+it would be difficult to succinctly include a list of ontologies in an OWL block
+- for these purposes it may be better to run different endpoints
+for different sets of relevant and interrelated ontologies.
+
+Whilst going forward with this project, it may also be worth drafting a formal
+specification for what constitutes an 'OWL endpoint,' similar
+to that which exists for SPARQL endpoints\cite. This would be useful for an
+authoritative source on functionality, as well as being able
+to dictate necessary functionality for any further and alternative
+implementations.
+
+\subsubsection{Possibly Extend OWLLink API}
+
+Despite not supporting Manchester OWL Syntax queries, OWLLink API is a large and
+developed project. For this reason, it may be worth doing some
+more work into researching whether the implemtation of Manchester OWL Syntax
+queries is faesible.
 
 \begin{thebibliography}{9}
 
@@ -660,6 +812,30 @@ easily extensible by others.
   \emph{OWL 2 Web Ontology Language Primer (Second Edition)}.
   W3C,
   December 2012.
+
+\bibitem{humontology}
+  Nicole L. Washington et al,
+  Linking Human Diseases to Animal Models Using Ontology-Based Phenotype Annotation,
+  Plos Biology,
+  November 2009.
+
+\bibitem{semwebdiscovery}
+  D.J. Wild, et al.,
+  Systems chemical biology and the Semantic Web: what they mean for the future of drug discovery research,
+  Drug Discov Today,
+  2012.
+
+http://www.plosbiology.org/article/info%3Adoi%2F10.1371%2Fjournal.pbio.1000247#pbio-1000247-g007
+
+\bibitem{obofoundry}
+  Obo Foundry
+  http://obofoundry.org/
+  Retrieved 17/04/2014.
+
+\bibitem{dbpedia-uses}
+  DBPedia Use Cases
+  http://wiki.dbpedia.org/UseCases
+  Retrieved 07/04/2014
 
 Example OWLLink query:
 http://owllink.org/owllink-httpxml-20091116/additional-examples/owllink-example-ClassQueries-request-20091116.xml
