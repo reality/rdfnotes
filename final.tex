@@ -447,7 +447,7 @@ These are being used for example to examine biological and drug data for medical
 purposes\cite{humontology}. One particular realm of interest is drug discovery,
 mining existing information on the semantic web to predict the results of drugs,
 and eventually predicting and finding new targets and indications for existing
-drugs\cite{semwebdiscoverty}.
+drugs\cite{semwebdiscovery}.
 
 Despite the lack of adoption of semantic web technologies for general use, there
 are a few initiatives which work to make large amounts of structured data
@@ -470,41 +470,96 @@ applications.\cite{dbpedia-uses}
 
 \section{Problem Statement}
 
-\subsection{Data Integration}
+\subsection{Statement}
 
-The issue with the Semantic Web as it currently exists is that while there is a
-lot of data stored in machine-processable formats, there is a lot of information 
-existing in different data models (RDF and OWL ontologies, in respects to this project). 
-This means it becomes somewhat difficult to integrate data between said models 
-if they are representing similar data in different ways.
+\emph{The issue we strive to solve is that of creating a simple solution for querying
+OWL ontologies over the web.}
 
-There is already some provision for this, as explained in the previous section - 
-SPARQL does actually allow data to be queried from an OWL ontology, loading a full 
-list of objects in an ontology designated by an IRI and then being able to query 
-it in an RDF expression. However, while this is useful in some cases, there are
-a number of disadvantages and missing functionality:
+An issue with the usability of OWL ontologies as a technology for the
+representation of knowledge on the semantic web, is that there is currently no
+way to easily query data from it in a human interactable way over the Web.
+Furthermore, this issue means it is difficult to integrate data from OWL
+ontologies with that from RDF datasets. 
+
+\subsection{Justification}
+
+\subsubsection{OWL Queries}
+
+As described in the State of The Semantic Web, there are two categories of
+languages used to represent and interact with the data: human-interactable and
+machine-interactable. These generally exist as the data storage formats (such as
+RDF/XML or OWL/Functional) and the query languages (such as SPARQL) which can be 
+used by humans to manipulate and integrate the datastores.
+
+For both RDF and OWL datastores it is currently easy to interact with the data
+over the web in a machine-processable manner - primarily through codebases
+utilising XML parsers or through bespoke libraries and server software such as 
+OWLAPI and OWLLink.
+
+For human-querying, the area is highly-developed for RDF and similar datastores, 
+with SPARQL allowing users to write queries to manipulate data both locally and
+through web-based endpoints. The language also supports federation through the
+SERVICE keyword, which allows the user to send further data queries to remote
+SPARQL endpoints and thereby further datasets. This is incredible useful for
+making useful data easily available and integratable to those working with it.
+
+However, for OWL ontologies the situation is somewhat different, the 'querying'
+of an ontology at all being somewhat of a novel concept - using Manchester OWL
+Syntax for such queries, a purpose for which it was not intentionally designed.
+
+Therefore the implementation of this functionality is not ubiquitous - only a
+few pieces of software carrying it. One is Protege, which is a highly popular
+desktop tool for interacting, building, integrating and editing OWL ontologies;
+including a query tool allowing users to return relevant classes from a given
+Manchester OWL Syntax string. 
+
+However, the limitation of Protege is that it is strictly a desktop application
+- missing the functionality found in SPARQL for reasoning over the web in a
+federated manner. This limits the scope of data availability, integration and
+ease of use for real world application. 
+
+\subsubsection{RDF and OWL Integration}
+
+While there is a lot of data stored in machine-processable formats on the semantic web, 
+there is a lot of information existing in different data models. This 
+tends to happen either because a particular technology was chosen due to 
+a particular featureset, for historical reasons or simply by organisational convention.
+
+Therefore, data integration must be performed on the datasets to use them
+together and glean useful information from them. A major technology used for 
+data integration on the semantic web is SPARQL.
+
+As explained in the previous section - SPARQL is a flexible technology and allows 
+data to be pulled from several different types of datastore (including Redis or an 
+OWL ontology) through providing an IRI to resource; then converting it to an RDF 
+expressed datastore, and allowing regular SPARQL querying in this way. 
+
+This makes SPARQL a powerful tool for data integration, providing a common
+language usable for querying over multiple types of datasets in a single query.
+
+However, in the case of OWL ontologies, the current process of converting the
+ontology to an RDF dataset carries a number of issues and reduced
+functionalities when compared to working with OWL natively:
 
 \begin{itemize}
   \item Inability to perform on-the-fly semantic reasoning on ontologies.
   \item No ability to query the data in a native manner (using Manchester OWL Syntax).
   \item Loss of certain descriptive logic modelling axioms available in OWL
   ontologies when expressed in RDF.
-  \item Certain OWL serialisation formats not supported by many RDF readers.
+  \item Many OWL serialisation formats not supported by many RDF readers.
 \end{itemize}
 
-*expand
+Combined, these factors reduce the quality and ease of querying OWL ontologies when 
+using SPARQL. Therefore the problem exists in SPARQL that while it can pull data
+from different sources, the process of doing so compromises some of the endemic
+qualities of the integrated dataset - particularly in the case of OWL
+ontologies.
 
-Therefore the problem in this case is developing a manner by which to integrate
-data stored in RDF and OWL formats without compromising the endemic qualities of 
-each model through doing so.
+\subsubsection{Importance and Impact}
 
-The previously mentioned drug discovery purposes for semantic web technologies
-initially involve integrating data which may exist in different schemas or
-different database systems to make use of the data.\cite{semwebdiscovery}.
-
-* Why it's useful
-
-\subsection{Human-interactable OWL Querying Over The Web}
+Immediately, the previously mentioned drug discovery research using semantic web 
+technologies largely involve integrating data which exists in different schemas or
+different database systems to make use of the data and establish relationships\cite{semwebdiscovery}.
 
 One thing that seems lacking in implementations of semantic web technologies as
 they exist is that the major implementations are all rather large and opaque
@@ -522,45 +577,21 @@ Transmission of data on the web tends to favour simple REST APIs which feature
 simple HTTP requests with parameters, instead of the complicated XML structures 
 necessary to query data from OWLLink servers for example. On the other hand, the
 previously discussed SPARQL data endpoints provide a simple HTTP interface for
-SPARQL queries, and I believe the effectiveness of the availability of these
-simpler and more accessible technologies can be seen in the difference in uptake
-between SPARQL and OWLLink.
+SPARQL queries, so while the underlying technology can be anything - the
+interface means that any application can easily make use of the service.
+
+The effectiveness of the availability of these simpler and more accessible 
+technologies can be seen in the massive number of web and desktop applications
+which make use of these standard interfaces and APIs.
 
 Therefore, I believe it may be that the lack of takeup of knowledge-representation systems
 for front-end applications may be the down to the lack of lightweight libraries, 
-services and frameworks available for working with them.
-
-As described in the State of The Semantic Web, there are two categories of
-languages used to represent and interact with the data: human-interactable and
-machine-interactable. These generally exist as the data storage formats (such as
-RDF or OWL) and the query languages (such as SPARQL or Manchester OWL Syntax)
-which can be used by humans to manipulate and integrate the datastores.
-
-An issue with the Semantic Web is also that of exposing these datasets to use by
-computers and machines over the Web i.e. data avilability and integration over
-the web.
-
-For both RDF and OWL datastores it is currently easy to interact with the data
-over the web in a machine-processable manner - primarily through codebases
-utilising XML parsers or through bespoke libraries and server software such as 
-OWLAPI and OWLLink.
-
-For human-querying, the area is highly-developed for RDF and similar datastores, 
-with SPARQL allowing users to write queries to manipulate data both locally and
-through web-based endpoints. The language also supports federation through the
-SERVICE keyword, which allows the user to send further data queries to remote
-SPARQL endpoints and thereby further datasets. This is incredible useful for
-making useful data easily available and integratable to those working with it.
-
-However, for OWL ontologies the situation is somewhat different,
-human-interaction with ontologies is generally done through desktop applications
-such as Protégé, which allows users to load, edit, reason and query ontologies 
-using the Manchester OWL Syntax.
-
-However, there is currently no way for users to send simple Manchester OWL
-Syntax queries to remote reasoners and retrieve relevant classes for use. 
-Therefore, another problem is providing a web-based solution for human-input OWL
-queries over multiple ontologies through Web. 
+services and frameworks available for working with them. The solution of this
+problem - particularly for OWL, which provides advanced knowledge representation
+features and techniques - may potentially bring about some more interesting and
+practical uses for the technology; hopefully moving towards the original vision
+of the Semantic Web as a universally federated and easily traversable datastore
+for all purposes.
 
 * semantic web lacking simple software
 
