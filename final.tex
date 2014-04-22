@@ -321,7 +321,10 @@ data from a store.
 SPARQL also has the provision to query data from non-RDF databases such as Redis
 and OWL ontologies by transforming and interacting with the data as if it were
 in an RDF syntax. This is useful for data integration, as it means data can be
-used over multiple formats. 
+used over multiple formats. However, certain OWL representations cannot be
+converted by most RDF readers - including functional syntax, Manchester syntax
+and OWL/XML, and in converting an OWL ontology to RDF format, richer semantics
+offered by OWL are lost - including certain axioms, and on-the-fly reasoning.
 
 Another important quality of SPARQL is that it's federated, data may be loaded
 remotely over the web by providing an IRI to the datastore. Also, the language
@@ -478,10 +481,18 @@ if they are representing similar data in different ways.
 There is already some provision for this, as explained in the previous section - 
 SPARQL does actually allow data to be queried from an OWL ontology, loading a full 
 list of objects in an ontology designated by an IRI and then being able to query 
-it in an RDF expression. However, while this is useful in some cases, it misses 
-two major advantages of OWL ontologies: the performance of semantic reasoning
-upon the dataset, and the ability to query the data in a native manner (using 
-Manchester OWL Syntax).
+it in an RDF expression. However, while this is useful in some cases, there are
+a number of disadvantages and missing functionality:
+
+\begin{itemize}
+  \item Inability to perform on-the-fly semantic reasoning on ontologies.
+  \item No ability to query the data in a native manner (using Manchester OWL Syntax).
+  \item Loss of certain descriptive logic modelling axioms available in OWL
+  ontologies when expressed in RDF.
+  \item Certain OWL serialisation formats not supported by many RDF readers.
+\end{itemize}
+
+*expand
 
 Therefore the problem in this case is developing a manner by which to integrate
 data stored in RDF and OWL formats without compromising the endemic qualities of 
@@ -787,7 +798,6 @@ of new
 works to be done, there are other semantic data
 formats which currently do not support easy data integration. I think that
 SPARQL serves
-as a good base for any further data integration,
 as a good base for any further data integration,
 given its wide adoption and currently existing support for many different types
 of data.
