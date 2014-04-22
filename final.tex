@@ -97,7 +97,9 @@ these data formats which allow software to easily traverse the totality of
 available data and process it in a meaningful manner. 
 
 To move forward and implement the Semantic web, we have since that date seen the
-production of a number of technologies moving towards this goal.
+production of a number of technologies moving towards this goal. Today, the
+Semantic Web exists as a movement promoting standardised structured data
+formats, primarily led by W3C.
 
 \subsection{Technologies}
 
@@ -183,39 +185,105 @@ the datatypes within it - the existence and extensibility of said vocabularies
 meaning it can universally define and describe much more complicated and 
 specific datatypes than can RDBMS systems.
 
-* triples
+Additional to RDF, the RDF Schema technology was later developed. This is
+designed to buld on the limited vocabulary of RDF to provide additional features
+for knowledge representation by providing additional syntax for describing
+classes. An example of this is the ability to describe a class's types or define
+an overall hierarchy.
+
+\begin{lstlisting}
+PREFIX animal: <http://realispicio.us>
+animal:turtle    rdfs:subClassOf    animal:animal
+\end{lstlisting}
+
+The above example shows the description of a cat as being a subclass of animal.
+The addition of this kind of data representation constitutes description
+logic\cite{desclogic} - and through doing so allows the data to actually
+represent meaning through the class interrelations and restrictions (or axioms)
+in an \emph{ontology}.
 
 \subsubsection{OWL Ontologies}
 
 An ontology is a formal representation of a set of concepts and their
-interrelationships, types and hierarchical standings. RDF is rather naturally
-suited to storing this type of data, being that it represents a graph, however
-technologies such as OWL (The Web Ontology Language) have been developed
-post-RDF to provide additional suitability and a greater featureset for this
-paradigm of knowledge representation.
+interrelationships, types and hierarchical standings. RDF (and RDFS moreso) is
+rather naturally suited to storing this type of data, being that it represents 
+a graph, however technologies such as OWL (The Web Ontology Language) have been 
+developed post-RDF to provide additional suitability and a greater featureset 
+for this paradigm of knowledge representation.
 
 Despite the misleading acronym, OWL itself actually includes a large amount of
 different individual languges depending on the version of the specification used
-and the set of features required from the knowledge representation.
+and the set of features required from the knowledge representation, as well as
+whether humans or machines are the primary audience for use. 
 
-Both ontologies and OWL ontologies specifically include a set of classes, which 
-describe objects within the appropriate domain (much like a declarative RDF 
-description of an object with a set of predicates and values). It also contains
-a set of axioms, or constraints, which describe the interrelationships between
-the classes.
+\begin{lstlisting}
+Prefix: a: <http://realispicio.us/owl/animals/>
+Ontology: <http://realispicio.us/example.owl>
+
+ObjectProperty: eats
+  Domain: Animal
+  Range: Food
+
+Class: Animal
+Class: Squirrel
+  SubClassOf: Animal
+  EquivalentTo: eats only Nuts
+Class: Turtle
+  SubClassOf: Animal
+  EquivalentTo: eats some People
+
+Class Food
+Class: Nuts
+  SubClassOf: Food
+Class: People
+  SubClassOf: Food
+\end{lstlisting}
+
+Exampled above, Manchester OWL Syntax is commonly used for human-readable
+representation of OWL ontologies. The example defines a simple OWL ontology with
+a small set of classes and some relationships between them. Similar to RDF it
+may also contain a set of prefixes usable for shortening URIs. Each ontology
+must also be identified by a unique URI, stated in the Ontology declaration.
+
+Ontologies include a set of classes, which describe objects within the appropriate 
+domain (much like a declarative RDF description of an object with a set of predicates 
+and values). It also contains a set of axioms, or constraints, which describe the 
+interrelationships between the classes and in essence assign meaning to the
+knowledge represented in the ontology.
 
 The set of available axioms, constraints and relationships available in OWL
 ontologies allow it to effectively model description logic\cite{desclogic}. 
 
-** more about description logic.
+The mainstay object relation found in knowledge representation and description
+logic is that of IS-A; a relationship whereby one class is a subclass or 'type'
+of another - the definition of the superclass then implying that of the
+subclass. This is achieved in OWL ontologies with the 'SubClassOf' axiom,
+evidenced above by describing that the Squirrel and the Turtle are both
+subclasses of Animal, while Nuts and People are subclasses of Food.
 
-This is supported by semantic reasoners, which are pieces of software designed
-to evaluate the set of axioms between classes for logical consistency. OWL
-succeeds many previous attempts at ontological representation due to the
-existence of complete and terminating reasoners which can fully evaluate every
-consequence of the logic which exists in an ontology, allowing larger and more
-complicated ontologies to exist while continuing to contain validated 
-consistent meaning.
+Another common axiom described in ontologies are existential quantifications, or
+rather, expressing constraints on a property assigned to a class. Above, we
+define the object property 'eats' to all animals, noting that it can contain any
+type of food. Furthermore, we then set additional constraints in the definitions
+of each animal - squirrels can only eat nuts, while turtles must eat some
+people.
+
+Despite being a simple ontology, the logical implications of even a small set of
+axioms are great (though not necessarily explicitly stated, especially in the
+case of existential quantification). For example, an individual turtle as described 
+above would be considered to pass the rules of the ontology only if they eat some 
+people, therefore a turtle is free to eat nuts. On the other hand, a squirrel is limited
+to eating only nuts - so a squirrel observed eating people is likely not a
+squirrel at all.
+
+The testing of the implications of the description logic used to represent
+knowledge in OWL ontologies is supported by semantic reasoners, which are 
+pieces of software designed to evaluate the set of axioms between classes for 
+logical consistency. OWL succeeds many previous attempts at ontological 
+representation due to the existence of complete and terminating reasoners 
+which can fully evaluate every consequence of the logic which exists in an 
+ontology, allowing larger and more complicated ontologies to exist while 
+continuing to contain validated consistent meaning.
 
 * Describe OWL
 * Description Logic
@@ -357,8 +425,14 @@ middleman.
 
 \subsection{Uses and Impact}
 
-As these technologies and implentations exist, they have mostly been utilised
-for scientific purposes. 
+Despite the development of a great number of standards, technologies and pieces
+of software since the inception of the Semantic Web, the original
+dream and plan for evolution of the wide Semantic Web remains largely unrealised
+for general application.\cite{semweb}
+
+However, outside the strict prediction for the technologies developed to provide
+structured data for the world wide web at large, they have been used to great
+effect in specific domains - primarily in biology.
 
 An example of a common use for OWL ontologies is that of describing animal or
 plant models using the descriptive logic axioms provided by OWL. A collection 
@@ -367,16 +441,18 @@ including Zebrafish models and a full plant ontology model. In working with
 these ontologies the previously described Protege application is primarily used. 
 
 These are being used for example to examine biological and drug data for medical
-purposes\cite{humontology}. One particular realm of discovery is drug discovery,
+purposes\cite{humontology}. One particular realm of interest is drug discovery,
 mining existing information on the semantic web to predict the results of drugs,
 and eventually predicting and finding new targets and indications for existing
 drugs\cite{semwebdiscoverty}.
 
-A good example of a large RDF(S) dataset is DBPedia, which aims to extract
+Despite the lack of adoption of semantic web technologies for general use, there
+are a few initiatives which work to make large amounts of structured data
+available. A good example of this is DBPedia, which aims to extract
 information from the online encyclopaedia website Wikipedia and provide it in a
-structured and machine-processable format, available for free on the web. At the
-time of writing, it had collected information on more than four million objects
-and had collected more than 470million 'facts' overall.
+structured and machine-processable format (RDF(S)), available for free on the 
+web. At the time of writing, it had collected information on more than four 
+million objects and had collected more than 470 million 'facts' overall.
 
 An important thing to note about this dataset is the grand effort which is made
 to make the information freely and easily available in a number of manners and
