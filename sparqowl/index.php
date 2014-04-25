@@ -7,8 +7,8 @@
 </head>
 
 <body>
-    <form action="sparqowl.php" method="post">
-        <textarea cols="40" rows="5" name="query">Enter SPARQL query...</textarea>
+    <form name="sparqowl" action="sparqowl.php" method="post">
+        <textarea name="query" cols="40" rows="5">Enter SPARQL query...</textarea>
 
         <br />
 

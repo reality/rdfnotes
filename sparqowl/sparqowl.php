@@ -6,8 +6,8 @@ if(php_sapi_name() === 'cli') {
     // do command line tings
     $query = implode(' ', file('query.sparql'));
 } else {
-    $query = implode(' ', mysql_real_escape_string($_POST['query']));
-    $endpoint = mysql_real_escape_string($_POST['endpoint']);
+    $query = $_POST['query'];
+    $endpoint = $_POST['endpoint'];
 }
 
 // Load the query...
@@ -16,8 +16,6 @@ $query = str_replace(array("\r\n", "\r", "\n", "\t", "  "), ' ', $query);
 
 // Find and resolve OWL blocks
 // TODO: Resolve prefixes
-
-print $query;
 
 preg_match_all("/OWL\s*<(.+)>\s*{\s*(.+)\s*}/", $query, $owls, PREG_SET_ORDER);
 foreach($owls as $owl) {
@@ -32,13 +30,14 @@ foreach($owls as $owl) {
     $query = str_replace($owl[0], $values, $query);
 }
 
-print $query;
+print 'Resolved Query: ' . $query . '<br /><br />';
 
 // Run the SPARQL query
 
-/*$result = sparql_query($query);
+$db = sparql_connect($endpoint);
+$result = sparql_query($query);
 if(!$result) {
-    print sparql_errno() . ': ' . sparql_error() . '\n';
+    print sparql_errno() . ': ' . sparql_error() . '<br />';
     exit;
 }
 
@@ -46,13 +45,14 @@ if(!$result) {
 
 $fields = sparql_field_array($result);
 
-print "Number of rows: " . sparql_num_rows($result);
+print "Results: <br /><br />";
+print "Number of rows: " . sparql_num_rows($result) . "<br />";
 while($row = sparql_fetch_array($result)) {
     foreach($fields as $field) {
         print '[' . $field . ']: ' . $row[$field];
     }
-    print '\n';
-}*/
+    print '<br />';
+}
 
 // Perform a remote OWL query
 function owl_query($endpoint, $query) {
