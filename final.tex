@@ -528,7 +528,7 @@ The underlying technology's ability to provide simple data access over the Web
 means that DBPedia can be and is already used for a number of practical
 applications.\cite{dbpedia-uses}
 
-\subsubsection{Bio-informatics}
+\subsubsection{Bio-informatics and Medical Uses}
 
 However, outside the strict prediction for the technologies developed to provide
 structured data for the world wide web at large, they have been used to great
@@ -553,6 +553,32 @@ purposes\cite{humontology}. One particular realm of interest is drug discovery,
 mining existing information on the semantic web to predict the results of drugs,
 and eventually predicting and finding new targets and indications for existing
 drugs\cite{semwebdiscovery}.
+
+Efforts are also being made in the medical industry to utilise the semantic web
+for improved data interlinking. Several ontologies of medical vocabularies actually
+already exist in various formats such as SNOMED - however these suffer from not
+being able to interlink and integrate with other data sources. Therefore, work
+is going into creating RDF/OWL mappings for these ontologies. 
+
+The PHARMASurveyor software has also been developed to consider a large number
+of criterion to suggest a safest drug treatment regiment for a particular
+patient - providing an optimised profile for treatment. 
+
+\subsubsection{Commercial Use}
+
+Semantic web technologies are also starting to see real-world commercial use.
+For example, the EPIM Reporting Hub was developed as a collaborative effort
+between several companies, and is primarily used by oil companies (such as BP,
+ExxonMobil and MarathonOil). It gathers and integrates data into an RDF enterprise 
+database and then uses semantic web querying methods to build reports on business 
+intelligence, research and performance - such as daily drilling or production
+reports.
+
+Various other companies such as BBC, Facebook and Tesco also publish RDF data
+online. In the case of the BBC, this is done to aid cross-site navigation by
+querying for sites which may be related to a site the user is currently browsing
+- for example, finding other websites for television shows in which the cast for
+a show the user is currently browsing have also starred.
 
 \section{Problem Statement}
 
@@ -603,6 +629,14 @@ However, the limitation of Protege is that it is strictly a desktop application
 - missing the functionality found in SPARQL for reasoning over the web in a
 federated manner. This limits the scope of data availability, integration and
 ease of use for real world application. 
+
+On the other hand, the OWLLink server exists for querying OWL ontologies. It
+sits above OWLAPI and connects to a reasoner to expose various reasoner
+functionality over the web - including querying for classes. However, the API it
+exposes it very complicated and does not support querying with the Manchester
+OWL Syntax. This generally both locks client applications into using OWLAPI (and
+therefore Java) to make requests, and does not allow for easy human-interactable 
+querying. 
 
 \subsubsection{RDF and OWL Integration}
 
@@ -707,7 +741,6 @@ features and techniques - may potentially bring about some more interesting and
 practical uses for the technology; hopefully moving towards the original vision
 of the Semantic Web as a universally federated and easily traversable datastore
 for all purposes.
-
 
 \section{Design and Implementation}
 
@@ -901,7 +934,17 @@ therefore any reasoner could potentially be used in the application.
 To simplify querying, the ontologies' objects and classes are then iterated and
 have their labels extracted. Labels are a 'human-friendly' name for a class -
 e.g. 'adaxial cell' rather than 8951054, and this process allows the friendly
-names to be used to query classes using the Manchester OWL Syntax.
+names to be used to query classes using the Manchester OWL Syntax. 
+
+A custom short form provider (a subclass of the one included in OWLAPI) is then 
+passed the annotations in order to create a bi-directional mapping between the
+labels and the entities' (classes and instances) contained in the ontologies.
+This allows for easy querying using the short-form label for OWL classes. It is
+necessary to use a customised short form provider because while the Manchester
+OWL Syntax uses single quotes to identify class labels which are formed of
+multiple words, the default short form provider does not create mappings which
+surround annotations with single quotes - making it impossible to query them
+from such a parametised variable in a Manchester Owl Syntax expression.
 
 Each ontology is loaded into its own QueryEngine class, which provides
 functionality for retrieving a set of relevant classes from its ontology given a
@@ -1057,7 +1100,6 @@ serves as a good base for any further data integration,
 given its wide adoption and currently existing support for many different types
 of data.
 
-
 TODO examples
 
 * More practical uses for the implemented functionality
@@ -1087,10 +1129,24 @@ for different sets of relevant and interrelated ontologies.
 
 Whilst going forward with this project, it may also be worth drafting a formal
 specification for what constitutes an 'OWL endpoint,' similar
-to that which exists for SPARQL endpoints\cite. This would be useful for an
+to that which exists for SPARQL endpoints. This would be useful for an
 authoritative source on functionality, as well as being able
 to dictate necessary functionality for any further and alternative
 implementations.
+
+Further configuratbility in the application would also be useful, from basic
+configuration such as the address and port to which the server binds, to which
+reasoner the application should use. This would be useful for allowing the
+application to support a wider range of uses without expecting users to have to
+modify it.
+
+There is also a bug whereby OWLAPI refuses to reason over ontologies loaded from
+the IMPORT closure of parent OWL ontologies - while also refusing to explicitly
+load then once having done so. This makes it rather difficult to load a large
+amount of ontologies at once due to clashing. This could be solved by either
+somehow forcing OWLAPI to reason with and retrieve classes from these
+ontologies, or perhaps by dynamically ignoring the importation of further
+ontologies from import closures.
 
 \subsubsection{Possibly Extend OWLLink API}
 
