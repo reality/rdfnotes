@@ -869,7 +869,15 @@ results in a machine-readable format.
 
 \subsubsection{Implementation}
 
-The initial stages of the program startup will be the following:
+Java was chosen to implement the OWL data endpoint, primarily to make use of the
+extensive and ubiquitous OWLAPI library - which provides a number of useful
+functionalities and features useful for this application, including helper
+functions for parsing Manchester OWL Syntax, class expressions, ontology loading
+and representation. Moreover, its support for several other pieces of software
+(several types of reasoners, for example) means that the program remains
+extensible and adaptable to new purposes.
+
+The initial stages of the program startup are the following:
 
 \begin{enumerate}
     \item Load given ontologies into an ontology manager. 
@@ -879,6 +887,27 @@ The initial stages of the program startup will be the following:
     \item Start a HTTP API listener with code to handle any queries.
 \end{enumerate}
 
+The list of ontologies are provided to the application as a list of
+URIs in a text file. OWLAPI accepts most serialisation formats including OWL,
+OBO and XML - so there aren't too many restrictions on the acceptable formats. 
+
+Semantic reasoning is then performed on all of the loaded ontologies using the
+ELK reasoner. The choice to use the ELK reasoner was made due to the fact it's
+open source, is included by default in OWLAPI and supports the OWL 2 EL profile
+- suitable for reasoning large biological ontologies at a reasonable speed. 
+However, OWLAPI implements a standard interface for reasoner libraries and 
+therefore any reasoner could potentially be used in the application.
+
+To simplify querying, the ontologies' objects and classes are then iterated and
+have their labels extracted. Labels are a 'human-friendly' name for a class -
+e.g. 'adaxial cell' rather than 8951054, and this process allows the friendly
+names to be used to query classes using the Manchester OWL Syntax.
+
+Each ontology is loaded into its own QueryEngine class, which provides
+functionality for retrieving a set of relevant classes from its ontology given a
+valid class expression - then returning them in a HashMap.
+
+Once this is done, the HTTP server will be started - exposing the simple API. 
 The workflow of a request made to the server will be as follows:
 
 \begin{enumerate}
@@ -890,22 +919,53 @@ The workflow of a request made to the server will be as follows:
     to the collector.
 \end{enumerate}
 
-OWLAPI will be used to handle ontologies, including the reasoning, Manchester
-OWL Syntax conversion and class querying. 
+Jetty is used to create the HTTP server, since it is a simple HTTP server
+library available for Java - implementing the required functionality without any
+bloat, using in-built Java classes and thereby working towards the goal of
+keeping the codebase light and extensible. The server uses an
+observer-observable patter, and a single class instantiates the server while a
+custom handler is attached to handle any requests.
 
-For the server software I decided to use Jetty, since my research showed that
-this was about the simplest HTTP server library available in Java which
-implements the required functionality. It is well documented, and uses many
-in-built Java API classes which works towards keeping the codebase light and
-easily extensible by others. 
+A request sent to the server is a simple GET request including the Manchester
+OWL Syntax format (with characters unacceptable in URIs parsed into HTML
+entities and then converted back by the server - a single quote is converted to
+\%20, for example), an example may be:
 
-* not extensible
-* should be on the side of the server
+\begin{lstlisting}
+http://jagannath.pdn.cam.ac.uk:9090/?query=has_part\%20some\%20\%27plasma\%20membrane\%27
+\end{lstlisting}
 
-* Insert class diagram
-* Workflow
+The listener sanitises the input and converts HTML entities back into their real
+characters. It then sends the Manchester OWL Syntax request to the
+RequestManager. 
 
-\section{Testing}
+The RequestManager, containing the set of QueryEngines with the loaded
+ontologies, then uses the QueryParser class to convert the Manchester OWL Syntax 
+query to a class expression, utilising a number of in-built OWLAPI queries to do
+so. A class expression is a generalised and standardised machine-readable OWL
+class format usable with other OWLAPI functions (without the need for individual
+conversion). The RequestManager then iterates the QueryEngines and thereby the
+ontologies, asking each for a set of relevant classes to the class expression
+passed as a parameter - then collating the accrued HashMaps into a single
+HashMap.
+
+The QueryManager finds relevant classes to the given class expression by
+collating equivalent classes, subclasses and superclasses (in terms of the class
+hierarchy). It also has the potential to return instances, though this
+functionality is not enabled in the prototype, since this is generally not
+useful for biological ontologies - which generally represent a structure such as
+an animal model, rather than an instance of a particular animal.
+
+Following this, it has a full list of relevant classes to the original query,
+which it then uses the GSON library\cite{gson} (a Google-produced JSON library) to convert 
+the classes into JSON format. The JSON is then returned to the Jetty
+RequestHandler, which returns the data to the requestee.
+
+\subsubsection{Testing}
+
+Testing it undertaken in this application by a number of unit tests. Basic
+sanity tests such as checking the integrity of loaded data from an ontology are
+used alongside tests which query the server and expect a particular response.
 
 \section{Conclusion}
 
@@ -1120,6 +1180,11 @@ queries is faesible.
   Using ontologies to describe mouse phenotypes. 
   Genome biology, 
   2005.
+
+\bibitem{gson}
+  Google Inc.
+  https://code.google.com/p/google-gson/
+  Accessed: 20/02/2014
 
 \bibitem{semwebdiscovery}
   D.J. Wild, et al.,
