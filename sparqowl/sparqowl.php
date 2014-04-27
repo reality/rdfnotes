@@ -19,7 +19,10 @@ $query = str_replace(array("\r\n", "\r", "\n", "\t", "  "), ' ', $query);
 
 preg_match_all("/OWL\s*<(.+)>\s*{\s*(.+)\s*}/", $query, $owls, PREG_SET_ORDER);
 foreach($owls as $owl) {
-    $result = owl_query($owl[1], $owl[2]);
+print $owl[1];
+print $owl[2];
+}
+    /*$result = owl_query($owl[1], $owl[2]);
     if(!$result) {
         print "OWL query failed. World ending.";
         exit;

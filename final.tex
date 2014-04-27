@@ -257,7 +257,7 @@ logic is that of IS-A; a relationship whereby one class is a subclass or 'type'
 of another - the definition of the superclass then implying that of the
 subclass. This is achieved in OWL ontologies with the 'SubClassOf' axiom,
 evidenced above by describing that the Squirrel and the Turtle are both
-subclasses of Animal, while Nuts and People are subclasses of Food.
+subclasses of Animal, while Nuts and People are subclasses of Food. 
 
 Another common axiom described in ontologies are existential quantifications, or
 rather, expressing constraints on a property assigned to a class. Above, we
@@ -274,7 +274,24 @@ people, therefore a turtle is free to eat nuts. On the other hand, a squirrel is
 to eating only nuts - so a squirrel observed eating people is likely not a
 squirrel at all.
 
-The testing of the implications of the description logic used to represent
+There are
+various classes or 'families' of description logics which provide various types
+of rulesets and axioms at varying levels of complexity; following are some basic 
+families found in the realm of knowledge representation:
+
+\begin{description}
+    \item[EL] A small description logic which provides conjunction (AND) and
+    existential quantification.
+    \item[EL++] The most common description logic used in ontologies - an
+    extension of EL logic designed to be minimal while containing the main 
+    expressions used by large-scale ontologies for most practical 
+    applications.\cite{elplusplus}
+    \item[SHIQ(D)] Popular description logic for ontologies and reasoners which
+    supports role hierarchies, extra cardinality restrictions and other
+    features. 
+\end{description}
+
+The testing of implications of the description logic used to represent
 knowledge in OWL ontologies is supported by semantic reasoners, which are 
 pieces of software designed to evaluate the set of axioms between classes for 
 logical consistency. OWL succeeds many previous attempts at ontological 
@@ -282,6 +299,65 @@ representation due to the existence of complete and terminating reasoners
 which can fully evaluate every consequence of the logic which exists in an 
 ontology, allowing larger and more complicated ontologies to exist while 
 continuing to contain validated consistent meaning.
+
+There are also OWL profiles\cite{owlprofiles}, which are cut down versions of the full OWL
+specification which trade some features for the efficiency of reasoning. Each
+implements different sets of description logic families, tuned to differing
+knowledge representation approaches meaning each is useful in different situations.
+
+\begin{description}
+    \item[OWL 2 EL] Designed for very large ontologies which include many
+    properties or classes. The profile is based on the EL++ family of 
+    description logics, which include Existential Quantification. Therefore,
+    basic reasoning can take place in polynomial time in relation to the size of
+    the ontology.
+    \item[OWL 2 QL] For applications which include large amount of instance data
+    (instances of classes, tantamount to records in a relational database), The
+    expressive power of this profile is very limited, though includes most basic
+    modelling concepts. Answering queries with this profile can be done with a
+    standard relational query (such as SQL).
+    \item[OWL 2 RL] Useful for situations in which scalable reasoning is
+    required, while simultaneously not being able to sacrifice much expressive
+    power in the ontologies.
+\end{description}
+
+Different semantic reasoners have different featuresets - generally
+implementations of reasoning for various axioms found in ontologies, or
+completeness of various reasoning methods. These are generally to curtail 
+the time and resources needed to reason with large ontologies - and the various
+reasoners generally aim to support all features contained within a specific OWL
+profile\cite{reasonercompare}\cite{reasonerbenchmark}.
+
+\begin{description}
+    \item[Sesame] Open source software for reasoning with with RDF and RDFS
+    information - deals with OWL ontologies only on the level of RDF graphs.
+    Allows connections to various RDBMS, including MySQL and PostgreSQL.
+    \item[OWLIM] Uses the TRREE engine for RDFS and OWL reasoning. Offers
+    configurable reasoning support and performance for various uses. By default,
+    it performs reasoning and query evaluation in memory.
+    \item[KAON2] A Java reasoner which implements an extension of SHIQ rules with
+    extensions for DL-safe rules (a certain subset of axioms and rules which
+    ensure decidability). It utilises novel methods to apply known
+    deductive techniques such as magic sets or join-order optimisations
+    to DL reasoning.
+    \item[HermiT] Fully supports DL rules, though support for full SHIQ is still
+    in progress. The algorithms used are much more deterministic than others in
+    use.
+    \item[RacerPro] Optimised tableau reasoner for SHIQ(D). Supports integers
+    and real numbers. Implemented in LISP and is commercial software.
+    \item[Pellet] Supports SROIQ reasoning with simple data types, supporting a
+    tableau based decision procedure. 
+    \item[ELK] Ontology reasoner with the primary goal of supporting the full
+    OWL 2 EL profile in a fast manner. Still somewhat in progress, but is included
+    in OWLAPI as a default reasoner. 
+\end{description}
+
+Several reasoners (e.g. Pellet and RacerPro) use the analytic tableau method for
+reasoning, which determines the satisfiability of sets of rules or formulas
+representing first-order logic. The aim being to progressively simplify formulae
+until rules are exhausted or maximum simplicity is reached. Other reasoners,
+such as KAON2, use algorithms which convert the knowledge base to a Disjunctive
+Datalog Program.\cite{ddp}
 
 * Describe OWL
 * Description Logic
@@ -426,26 +502,12 @@ middleman.
 
 \subsection{Uses and Impact}
 
+\subsubsection{General Use}
+
 Despite the development of a great number of standards, technologies and pieces
 of software since the inception of the Semantic Web, the original
 dream and plan for evolution of the wide Semantic Web remains largely unrealised
 for general application.\cite{semweb}
-
-However, outside the strict prediction for the technologies developed to provide
-structured data for the world wide web at large, they have been used to great
-effect in specific domains - primarily in biology.
-
-An example of a common use for OWL ontologies is that of describing animal or
-plant models using the descriptive logic axioms provided by OWL. A collection 
-of biological ontologies can be found at OboFoundry\cite{obofoundry}, examples
-including Zebrafish models and a full plant ontology model. In working with
-these ontologies the previously described Protege application is primarily used. 
-
-These are being used for example to examine biological and drug data for medical
-purposes\cite{humontology}. One particular realm of interest is drug discovery,
-mining existing information on the semantic web to predict the results of drugs,
-and eventually predicting and finding new targets and indications for existing
-drugs\cite{semwebdiscovery}.
 
 Despite the lack of adoption of semantic web technologies for general use, there
 are a few initiatives which work to make large amounts of structured data
@@ -465,6 +527,32 @@ XML, N-Triples etc).
 The underlying technology's ability to provide simple data access over the Web
 means that DBPedia can be and is already used for a number of practical
 applications.\cite{dbpedia-uses}
+
+\subsubsection{Bio-informatics}
+
+However, outside the strict prediction for the technologies developed to provide
+structured data for the world wide web at large, they have been used to great
+effect in specific domains - primarily in biology.
+
+An example of a common use for OWL ontologies is that of describing animal or
+plant models using the descriptive logic axioms provided by OWL. The Phenotype
+And Trait Ontology (PATO) has been developed as a framework which allows the
+description and integration of quantitative and qualitative phenotype
+information accross different levels of granularity, domains and
+species\cite{pato}; rather acommunity standard for phenotype description as
+used by several international consortia (e.g. Phenoscape\cite{phenoscape},
+VPH\cite{vph}, IMPC\cite{impc}).
+
+A collection of biological ontologies can be found at
+OboFoundry\cite{obofoundry}, and examples of major model organism databases
+include Zfin\cite{zfin}, Flybase\cite{flybase} and Wormbase\cite{wormbase}. In working with
+these ontologies the previously described Protege application is primarily used. 
+
+These are being used for example to examine biological and drug data for medical
+purposes\cite{humontology}. One particular realm of interest is drug discovery,
+mining existing information on the semantic web to predict the results of drugs,
+and eventually predicting and finding new targets and indications for existing
+drugs\cite{semwebdiscovery}.
 
 \section{Problem Statement}
 
@@ -555,9 +643,38 @@ ontologies.
 
 \subsubsection{Importance and Impact}
 
-Immediately, the previously mentioned drug discovery research using semantic web 
-technologies largely involve integrating data which exists in different schemas or
-different database systems to make use of the data and establish relationships\cite{semwebdiscovery}.
+\subsubsubsection{Drug Repurposing}
+
+As previously mentioned, one particular real of interest in the field of
+Bioinformatics in relation to the semantic web is that of drug discovery -
+particularly drug repurposing\cite{pharmgkb}.
+
+Repurposing existing drugs for new applications can dramatically reduce both
+the cost of drug development and the rate of attrition in new compound
+development. Such a project exploits the exploration of model organism
+phenotypes for the discovery of novel drug action. More specifically, it would
+exploit the phenotypic similarities between classical 'loss of function'
+mutations and the inhibition of protein functions by drugs.
+
+Through doing this, one may potentially discover novel drug actions and
+indications - thereby carrying a further potential to eventually find new treatments for
+currently untreatable conditions. Initial studies and research have shown this
+to be a faesible subject for research with potentially useful
+results.\cite{drugrepurposeinitial}
+
+It would be achieved by first integrating drug effect and model organism
+phenotype data from publicly available class ontologies - utilising axioms to
+integrate and compare data existing in different domains. This would be achieved
+through various currently existing and  newly developed data integration techniques 
+(including the SPARQL integration of OWL and RDF data), along with methods of
+semantic similarity - using the layers of abstraction provided by ontologies
+to compare data. Then, any similarities between drug effects and organism
+phenotypes would be established. Once these are identified, one would determine 
+whether the observed similarities can provide insights into drug-target relationships, 
+confirming resultant hypotheses independently on human subjects through tests.
+(?)
+
+\subsubsubsection{Accessibility}
 
 One thing that seems lacking in implementations of semantic web technologies as
 they exist is that the major implementations are all rather large and opaque
@@ -591,7 +708,6 @@ practical uses for the technology; hopefully moving towards the original vision
 of the Semantic Web as a universally federated and easily traversable datastore
 for all purposes.
 
-* semantic web lacking simple software
 
 \section{Design and Implementation}
 
@@ -603,26 +719,35 @@ language extension and the queriable OWL endpoint.
 
 \subsection{SPARQL Extension}
 
-\subsubsection{Design}
+\subsubsection{SPARQL Syntax}
 
 As described in the State of The Art, there is already a SERVICE keyword
 included in the SPARQL language which provides a good model for sending a text
-query to a remote endpoint. Currently, it only supports remote SPARQL endpoints,
-and it was decided not to extend this construct to include support for an OWL
-endpoint as this would mean any resulting implementation would break the terms
-of the SPARQL specification. However, it may be suggested to the W3C in future
-to combine these constructs as a matter of efficiency. 
-
-Therefore, my software will add an 'OWL' block to the SPARQL language, which
-uses a similar syntactic pattern to the SERVICE keyword.
+query to a remote endpoint. 
 
 \begin{lstlisting}
-OWL SILENT <http://realispicio.us:9090> {
-    Pizza and hasTopping some FishTopping
+SERVICE <http://nourishedcloud.com/turtles> { 
+    ?s tu:name ?name . ?s tu:owner ?owner
 }
 \end{lstlisting}
 
-There are three properties to the above query:
+Evidenced above, the SERVICE block includes a URI which indicates a remote
+SPARQL endpoint, then includes a SPARQL query to send the server - upon
+execution and return of the results they are included in the resultset of the
+rest of the query.
+
+For an OWL query the pattern will be very similar - we want to send a Manchester
+OWL Syntax Query to a remote OWL endpoint, and combine the resulting classes
+with the resultset. Therefore, my software includes an 'OWL' block to the SPARQL 
+language, which uses a similar syntactic pattern to the SERVICE keyword:
+
+\begin{lstlisting}
+OWL SILENT <http://realispicio.us:9090> {
+    has_part some 'plasma membrane'
+}
+\end{lstlisting}
+
+There are four properties to the above query:
 
 \begin{description}
     \item[OWL] The OWL keyword will designate the beginning of an OWL block
@@ -639,30 +764,16 @@ There are three properties to the above query:
 \end{description}
 
 Upon parsing the OWL block the syntax will send a query to an OWL reasoner
-endpoint (described next in this section), and integrate the returned results
-into the query. 
+endpoint, and integrate the returned results into the query. 
 
-\subsubsection{Implementation}
+\subsubsection{Syntax Implementation}
 
-In researching the implementation of the OWL block addition to SPARQL, the
-initial thoughts were to perform this by actually extending the language itself.
-To do this, the only seemingly viable option was to extend Apache Jena, which is
-a major and widely used semantic web framework written in Java which includes the 
-ARQL SPARQL compiler. 
-
-The original plan was to build the extra syntax into ARQL in Jena, and
-distribute a modified version of the software while requesting the changes be
-merged with the main codebase.
-
-However, after further investigation this approach was deemed unsuitable because
-of the perceived inextensibility of the ARQL codebase, which makes use of a
-large amount of magic numbers and goes largely undocumented. [am I allowed to
-say this?]
-
-Therefore, a simpler approach was taken - to extend a library which sends a
-SPARQL query to a SPARQL endpoint by preprocessing it to find and run OWL
-blocks, then replacing the block with the results inline. The workflow of the
-script will be the following:
+To preserve a simple proof-of-concept and prototype implementation of the
+software, as well as retaining flexibility in the case of changing project
+parameters, we approached this project with a simple solution in the form of a
+PHP script. PHP also chosen because of its relative flexibility (acceptance of
+input from both the command line and the Web), along with the existence of a
+well-supported SPARQL library.
 
 \begin{enumerate}
     \item Input the SPARQL query into the script.
@@ -673,45 +784,76 @@ script will be the following:
     \item Return the full resultset.
 \end{enumerate}
 
-In terms of inputting the SPARQL query into the processing script, it will
-support being run both from the command line and over the web, by checking how
-it's being run. From there, it will gain the input run from the command line
-either designated in plaintext in the arguments, or from a file named in the
-arguments; if run over the web, it will accept a POST parameter including the
-query sent from a simple web interface also implemented by me (described later).
+In terms of inputting the SPARQL query into the processing script, it supports
+being run both from the command line and over the web, by checking whether it
+was invoked from a web server or from the command line - then pulling the input
+data from the appropriate source (either from the web form in POST data, or command
+line arguments specifying either a file or a plain text query).
 
-Scanning the script for occurences of OWL blocks will be done with a simple
-Regex to build an array of all matches and involved parameters.
+Before handling the SPARQL query, a simple regular expression is used to find
+all occurences of the OWL block syntax described above. It then iterates through
+these occurences, and uses the data extracted from them by the regular
+expression to send the given Manchester OWL Syntax Query to the specified OWL
+Endpoint.
 
-It will use these parameters to run each OWL block against the given OWL 
-endpoint.
-
-These results will then replace the OWL block in-place in the SPARQL query,
-using the VALUES inline data syntax.
-
-Once these have all been performed, the SPARQL query will be run against a
-SPARQL endpoint and the result returned to the user using the appropriate method.
-
-As an example, a simple SPARQL query including an OWL block like so (which
-simply asks for classes related to the adaxial cell in a zebrafish ontology):
+The endpoint returns appropriate classes given the OWL query in JSON format, or an 
+error. In the case of valid classes being returned, the JSON will be parsed for
+the IRI and class names of said classes, then replacing the OWL block in
+the query itself with the data about the returned classes inline in the query.
+This would look like the following when querying relevant classes to the adaxial
+cell in the Zebrafish ontology\cite{zfin}:
 
 \begin{lstlisting}
-SELECT * WHERE {}
-OWL <http://realispicio.us:9090> {
-    'adaxial cell'
-}
-\end{lstlisting}
-
-Would first be processed to a SPARQL query string containing the OWL block
-replaced by a VALUES block containing the results of the query:
-
-\begin{lstlisting}
-SELECT * WHERE {} 
 VALUES (?iri ?id) { 
     ( http://purl.obolibrary.org/obo/#ZFA_0009000  ZFA_0009000 ) 
     ( http://www.w3.org/2002/07/owl#Nothing  Nothing )
 }
 \end{lstlisting}
+
+Once all of the OWL blocks have been traversed and evaluated without error, the
+SPARQL query will be made to a given remote endpoint. To perform this, the 
+PHP-SPARQL-Lib library\cite{phpsparqllib} is used, which provides a class to 
+construct, query and handle result sets from remote SPARQL endpoints using CURL.
+
+Once the SPARQL query has been completed, the results will be displayed to the
+user in an appropriate manner - either on a web page or printed to the executing
+terminal.
+
+As an example, a simple SPARQL query including an OWL block like so, which asks
+for classes in the biology ontology//TODO CITE for classes which have a 'plasma
+membrane' as a part:
+
+\begin{lstlisting}
+SELECT * WHERE {}
+OWL <http://jagannath.pdn.cam.ac.uk:9090> {
+    has_part some 'plasma membrane'
+}
+\end{lstlisting}
+
+The OWL block would first be identified, and then the given Manchester OWL
+Syntax query would be sent to the specified endpoint and the block itself would
+then be replaced by a list of the resulting values before being executed against
+a SPARQL endpoint:
+
+\begin{lstlisting}
+SELECT * WHERE {} 
+VALUES (?iri ?id) { 
+    ( http://www.w3.org/2002/07/owl##Thing Thing ) 
+    ( http://purl.obolibrary.org/obo/#GO_0030313 GO_0030313 ) 
+    ( http://purl.obolibrary.org/obo/#GO_0012505 GO_0012505 ) 
+}
+\end{lstlisting}
+
+\subsubsection{Web Interface}
+
+The web interface is also a simple piece of software, it existing as a simple
+HTML form which accepts a SPARQL (with potential OWL block) query along with a
+remote endpoint to execute it against. It then executes this query with the
+aforementioned script and prints the results to the screen.
+
+* Insert screenshot
+
+\subsubsection{Testing}
 
 \subsection{OWL Endpoint}
 
@@ -722,6 +864,8 @@ OWL reasoner. The software will load a set of ontologies which any queries given
 to the server will be run against, run the reasoner against them, and then set
 up a simple server to accept Manchester OWL Syntax requests and return the
 results in a machine-readable format.
+
+* Insert class diagram
 
 \subsubsection{Implementation}
 
@@ -802,6 +946,21 @@ are using PHP.
 
 \subsubsection{Extend actual SPARQL Syntax}
 
+In researching the implementation of the OWL block addition to SPARQL, the
+initial thoughts were to perform this by actually extending the language itself.
+To do this, the only seemingly viable option was to extend Apache Jena, which is
+a major and widely used semantic web framework written in Java which includes the 
+ARQL SPARQL compiler. 
+
+The original plan was to build the extra syntax into ARQL in Jena, and
+distribute a modified version of the software while requesting the changes be
+merged with the main codebase.
+
+However, after further investigation this approach was deemed unsuitable because
+of the perceived inextensibility of the ARQL codebase, which makes use of a
+large amount of magic numbers and goes largely undocumented. [am I allowed to
+say this?]
+
 Eventually, it would be a superior solution to actually extend the SPARQL
 language itself - both by extension of the SPARQL
 specification and through an extension in the reference implementation of SPARQL
@@ -811,49 +970,33 @@ supported.
 
 \subsubsection{Combination with SERVICE}
 
-As previously noted, the pattern between the SERVICE and OWL keywords are very
-similar- namely, they both send a HTTP request and
-use the results in the query. Because of this, it may be worth attempting to
-extend the implementation of the SERVICE keyword such
-that it supports OWL endpoints as well as SPARQL endpoints. The advantages of
-this would be syntactic efficiency, as well as providing
-a reasonable and extendable framework for supporting other such simple endpoints
-in future (integration from other types of data).
+As previously mentioned, there is already a SERVICE keyword included in the
+SPARQL language, which follows the model of sending a HTTP query to a remote
+endpoint and integrating the results with the local resultset. 
+
+Currently, it only supports remote SPARQL endpoints, and it was decided not to 
+extend this construct to include support for an OWL endpoint during the course
+of theis project, as this would mean any resulting implementation would break 
+the terms of the SPARQL specification. However, it may be suggested to the W3C 
+in future to combine these constructs as a matter of syntactic efficiency. 
+
+The pattern between the SERVICE and OWL keywords are very
+similar. Because of this, the extension of the SERVICE keyword to include OWL
+endpoints should not be too difficult, and carries the additional benefit of
+providing a reasonable and extendable framework for the further extension of the
+keyword to include and support other such simple endpoints which may be
+developed in the future (supporting further data integration with a standard
+interface).
 
 \subsubsection{Data Integration From Other Sources}
 
 While connecting OWL and RDF datastores in this manner already allows for a lot
-of new
-works to be done, there are other semantic data
-formats which currently do not support easy data integration. I think that
-SPARQL serves
-as a good base for any further data integration,
+of new work to be done, there are other semantic data
+formats which currently do not support easy data integration. I think that SPARQL 
+serves as a good base for any further data integration,
 given its wide adoption and currently existing support for many different types
 of data.
 
-One particular use of this could be to undertake a project to use this method of
-data
-integration among others to explore the the phenotypic similarites between "loss
-of
-function" mutations from gene knockout animal models and the inhibition of
-protein
-functions by existing drugs.
-
-Through doing this, one may potentially discover novel drug actions and
-indications -
-with the furhter potential to eventually find new treatments for currently
-untreatable
-conditions; an approach which may be seen as particularly favourable in recent
-times
-due to the heightening cost of research and development of entirely new drugs.
-
-It would be achieved by first integrating drug effect and model organism
-phenotype data
-from public databases through various currently existing and newly developed
-data
-integration techniques, then determine any similarities between drug effects and
-organism phenotypes. Once these are identified, one would determine whether the
-observed similarities can provide insights into drug-target relationships.
 
 TODO examples
 
@@ -916,6 +1059,39 @@ queries is faesible.
   W3C,
   January 2008.
 
+\bibitem{pharmgkb}
+  Allison, M., NCATS launches drug repurposing program.
+  Nat Biotechnol,
+  2012: 30(7): p. 571-2.
+  
+\bibitem{drugrepurposeinitial}
+  Hoehndorf, R., A. Oellrich, D. Rebholz-Schuhmann, P.N. Schofield, and G.V. Gkoutos,
+  Linking PharmGKB to phenotype studies and animal models of disease for drug repurposing. 
+  Pacific Symposium on Biocomputing (PSB), 
+  2012: p. 388-399.
+
+\bibitem{zfin}
+  Sprague, J., L. Bayraktaroglu, Y. Bradford, T. Conlin, N. Dunn, D. Fashena, K. Frazer, M. Haendel, D.G. Howe, J. Knight, P. Mani, S.A. Moxon, C. Pich, S. Ramachandran, K. Schaper, E. Segerdell, X. Shao, A. Singer, P. Song, B. Sprunger, C.E. Van Slyke, and M. Westerfield, 
+  The Zebrafish Information Network: the zebrafish model organism database provides expanded support for genotypes and phenotypes. 
+  Nucleic. Acids Research,
+  2007: p. gkm956+.
+
+\bibitem{wormbase}
+  Harris, T.W., I. Antoshechkin, T. Bieri, D. Blasiar, J. Chan, W.J. Chen, N. De La Cruz, P. Davis, M. Duesbury, R. Fang, J. Fernandes, M. Han, R. Kishore, R. Lee, H.-M. M\"uller, C. Nakamura, P. Ozersky, A. Petcherski, A. Rangarajan, A. Rogers, G. Schindelman, E.M. Schwarz, M.A. Tuli, K. Van Auken, D. Wang, X. Wang, G. Williams, K. Yook, R. Durbin, L.D. Stein, J. Spieth, and P.W. Sternberg, 
+  WormBase: a comprehensive resource for nematode research,
+  Nucleic Acids Research,
+  2010. 38(suppl 1): p. D463-D467.
+
+\bibitem{ddp}
+  Ullrich Hustadt, Boris Motik, Ulrike Sattler,
+  Reducing SHIQ Description Logic to Disjunctive Datalog Programs,
+  KR,
+  2004.
+
+\bibitem{flybase}
+  Drysdale, R. and FlyBase Consortium, FlyBase : a database for the Drosophila research community.
+  Methods in molecular biology (Clifton, N.J.), 2008. 420: p. 45-59.
+
 \bibitem{desclogic}
  Franz Baader, Deborah L. McGuinness, Daniele Nardi, Peter F. Patel-Schneider,
  \emph{The Description Logic Handbook - Theory, Implementation and Actions}.
@@ -928,17 +1104,34 @@ queries is faesible.
   W3C,
   December 2012.
 
+\bibitem{owlprofiles}
+  http://www.w3.org/TR/owl2-profiles/
+  W3C,
+  Accessed: 27/04/2014.
+
 \bibitem{humontology}
   Nicole L. Washington et al,
   Linking Human Diseases to Animal Models Using Ontology-Based Phenotype Annotation,
   Plos Biology,
   November 2009.
 
+\bibitem{pato}
+  Gkoutos, G.V., E.C. Green, A.-M.M. Mallon, J.M. Hancock, and D. Davidson,
+  Using ontologies to describe mouse phenotypes. 
+  Genome biology, 
+  2005.
+
 \bibitem{semwebdiscovery}
   D.J. Wild, et al.,
   Systems chemical biology and the Semantic Web: what they mean for the future of drug discovery research,
   Drug Discov Today,
   2012.
+
+\bibitem{phpsparqllib}
+  Christopher Gutteridge & University of Southampton,
+  PHP-SPARQL-Lib,
+  https://github.com/cgutteridge/PHP-SPARQL-Lib,
+  Accessed 23/2/2014.
 
 http://www.plosbiology.org/article/info%3Adoi%2F10.1371%2Fjournal.pbio.1000247#pbio-1000247-g007
 
@@ -947,10 +1140,46 @@ http://www.plosbiology.org/article/info%3Adoi%2F10.1371%2Fjournal.pbio.1000247#p
   http://obofoundry.org/
   Retrieved 17/04/2014.
 
+\bibitem{phenoscape}
+  Dahdul, W.M., J.P. Balhoff, J. Engeman, T. Grande, E.J. Hilton, C. Kothari, H. Lapp, J.G. Lundberg, P.E. Midford, T.J. Vision, M. Westerfield, and P.M. Mabee, 
+  Evolutionary characters, phenotypes and ontologies: curating data from the systematic biology literature,
+  PLoS One,
+  2010. 5(5): p. e10708.
+
+\bibitem{vph}
+  de Bono, B., R. Hoehndorf, S. Wimalaratne, G.V. Gkoutos, and P. Grenon, 
+  The RICORDO approach to semantic interoperability for biomedical data and models: strategy, standards
+and solutions, 
+  BMC Research Notes, 
+  2011. 4(1): p. 313.
+
+\bibitem{impc}
+  Brown, S.D. and M.W. Moore,
+  Towards an encyclopaedia of mammalian gene function: the International Mouse Phenotyping Consortium. 
+  Dis Model Mech, 
+  2012. 5(3): p. 289-92.
+
 \bibitem{dbpedia-uses}
-  DBPedia Use Cases
+  DBPedia Use Cases,
   http://wiki.dbpedia.org/UseCases
   Retrieved 07/04/2014
+
+\bibitem{reasonercompare}
+  Kathrin Dentler, et al.
+  Comparison of Reasoners for large Ontologies in the OWL 2 EL Profile,
+  2010.
+
+\bibitem{reasonerbenchmark}
+  Juergen Bock, et al,
+  Benchmarking OWL Reasoners,
+  Workshop on Advancing Reasoning on the Web: Scalability and Commonsense,
+  2008.
+
+\bibitem{elplusplus}
+  Franz Baader, Sebastian Brandt, Carsten Lutz,
+  Pushing the EL Envelope,
+  IJCAI'05 Proceedings of the 19th international joint conference on Artificial intelligence
+  2005. p. 364-369.
 
 Example OWLLink query:
 http://owllink.org/owllink-httpxml-20091116/additional-examples/owllink-example-ClassQueries-request-20091116.xml
