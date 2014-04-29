@@ -36,16 +36,47 @@ title=\lstname,                 % show the filename of files included with \lsti
 
 \section{Introduction}
 
-My project is concerned with interlinking two semantic web technologies,
-allowing reasoning to take place in a remote system from a local endpoint and
-allowing these results to be utilised by the initial query. This is undertaken
-with a view to increase the interoperability of semantic web technologies, and
-increase the power and usefulness of the federation they work in.
+The nature of my project builds on technologies concerned with the semantic web.
+Pioneered by Tim Berners-Lee and the W3C, the Semantic Web exists as a set of
+recommendations, standard and technologies which support structured and
+federated information sharing on the World Wide Web - primarily for
+machine-readable purposes.
+
+One particularly useful indication for semantic web technologies are knowledge
+representation in the form of ontologies. Ontologies store information about
+objects and then represent their hierarchies and interrelations using axioms.
+
+For the practical use of these knowledge representations, both users and
+programs need to be able to easily query and reason with the data to gain
+meaningful results. 
+
+A primary field such technologies are found in are the fields of biology and
+medicine - which utilise and mine ontologies for the purpose of creating new
+information in fields such as drug creation and repurposing, as well as the
+standardisation of medical terms between institutions.
+
+There are several types and tiers of semantic web technologies used for
+knowledge representation, the most popular of which are RDF and OWL - which
+provide different features for such purposes.
+
+This project in particular is concerned with interlinking RDF and OWL querying
+technologies. While RDF has a highly developed query language
+called SPARQL, OWL does not have a universally and easily available method for
+querying data over the web.
+
+The advantages of doing this lie in being able to easily integrate data from
+both sources into a single result set - making practical use and comparison of
+data easier. This has practical applications in the real of drug discovery, for
+example.
+
+Beyond integration, the work will also provide a service in that the development
+of a web-based OWL endpoint will further the availability of easily queriable
+OWL data on the World Wide Web - something which is thus far missing.
 
 Specifically, the project will be the creation of an addition to
 SPARQL\cite{sparql} (SPARQL Protocol And RDF Query Language) to allow remote
-OWL\cite{owlprimer} reasoning to be performed on OWLlink endpoints and be included in the
-SPARQL result-set.
+OWL\cite{owlprimer} querying to be performed using the Manchester OWL Syntax 
+on a custom OWL endpoint and the results be integrated into the SPARQL result-set.
 
 There is a similar construct already included in the SPARQL language called
 \emph{SERVICE}, which is unfortunately not suitable for use in this project
@@ -55,17 +86,30 @@ generalisation would be prudent).
 
 So, I will develop a similar addition to the language, such as an \emph{OWL}
 block, which will allow the language to execute a given OWL query at a given
-OWLlink endpoint (along with the possibility of a flag depending on the type of
+OWL endpoint (along with the possibility of a flag depending on the type of
 SPARQL query), and then retrieve these results and use them in the SPARQL
 result-set.
 
-Furthermore, I will endeavour to create a working implementation of this
-addition - which will allow a demonstration of the system. This will require
-some research into the various technologies currently available.
+To support the SPARQL extension and to provide a simple endpoint for OWL
+querying on the web, a simple HTTP API for reasoning and querying OWL ontologies
+will also be developed using Java. It will accept a class description in the
+form of a Manchester OWL Syntax string, as well as a number of options and then
+apply these to a number of configurable loaded ontologies and return the
+relevant classes in a machine-readable format. This has applications beyond use
+in the OWL block, such as integration with any other Web technology or
+application.
 
-Another particular focus of my resulting work, beyond the primary functionality
+Furthermore, I will endeavour to create a working implementation of this
+addition - which will allow a demonstration of the system. The particular 
+focus of my resulting work, beyond the primary functionality
 will be in creating software that is easy to maintain, extend and modify - in
 the spirit of open data and the semantic web.
+
+Achieving this will require research into the various technologies on the
+semantic web (such as RDF, SPARQL and OWL) and the fields which underlie them
+(such as description logic). Then, research into the various pieces of software
+and applications which work with semantic web data will take place to find the
+most suitable and practical solution for the development of this project.
 
 Upon finishing the research project, the findings will be presented in the form
 of a scientific paper presenting the specification of the addition to the
@@ -98,6 +142,10 @@ To move forward and implement the Semantic web, we have since that date seen the
 production of a number of technologies moving towards this goal. Today, the
 Semantic Web exists as a movement promoting standardised structured data
 formats, primarily led by W3C.
+
+There are several languages and specifications which are used in the Semantic
+Web, including RDF and OWL, among several technologies used to build, integrate
+and query date stored in them.
 
 \subsection{Technologies}
 
@@ -745,12 +793,47 @@ for all purposes.
 \section{Design and Implementation}
 
 My solution to the given problems are to develop an extension to the SPARQL
-query language which allows a user to send a Manchester OWL Syntax query to a
-remote OWL reasoner endpoint, which will return relevant objects which are
-included in the SPARQL resultset. This will require both development of the
-language extension and the queriable OWL endpoint.
+query language - a block which allows a user to send a Manchester OWL Syntax query to a
+remote OWL reasoner endpoint which has pre-computed inferences and upon querying
+returns a set of results relevant to the class description described by the
+query. These classes are then included in the SPARQL resultset. This requires 
+both development of the language extension and the queriable OWL endpoint.
+
+Being a research project whose technical output is primarily a prototypal proof
+of concept, the software development methodology used was prototypal and
+iterative. After researching the technologies and current software involved in
+the realm of the semantic web, practical research and prototyping was done with 
+several solutions - including the use of Jena and OWLLink - before settling on
+the following design and implementation approach as being the most likely to
+give practical results given the project's timeframe.
+
+In terms of iteration, the requirements for a potential user were first analysed 
+as per the problem statements:
+
+\begin{itemize}
+    \item Provide a simple REST-like API for users to make HTTP queries for
+    classes over several reasoned OWL ontologies using a class description
+    provided in Manchester OWL Syntax.
+    \item Allow the user to choose to make a query for subclasses, equivalent
+    classes or superclasses over OWL ontologies.
+    \item Allow a user to make remote OWL class queries to a remote endpoint from 
+    within the SPARQL query language.
+    \item Provide a Web interface for users to make SPARQL queries with the OWL
+    block extensions.
+\end{itemize}
+
+The following two pieces of software were developed to fit these requirements.
 
 \subsection{SPARQL Extension}
+
+The SPARQL extension takes place in the form of a wrapper around a script which
+sends a SPARQL query, first evaluating the script for any OWL blocks - in the
+case of which it sends an OWL query to the endpoint and includes any resulting
+classes in the query in place of the OWL block.
+
+The script is largely procedural, making use of functions for the processing of
+the query and OWL data. This approach was chosen over object orientation due to
+the simplicity of the script.
 
 \subsubsection{SPARQL Syntax}
 
@@ -859,7 +942,7 @@ membrane' as a part:
 \begin{lstlisting}
 SELECT * WHERE {}
 OWL <http://jagannath.pdn.cam.ac.uk:9090> {
-    has_part some 'plasma membrane'
+    has\_part some 'plasma membrane'
 }
 \end{lstlisting}
 
@@ -872,8 +955,8 @@ a SPARQL endpoint:
 SELECT * WHERE {} 
 VALUES (?iri ?id) { 
     ( http://www.w3.org/2002/07/owl##Thing Thing ) 
-    ( http://purl.obolibrary.org/obo/#GO_0030313 GO_0030313 ) 
-    ( http://purl.obolibrary.org/obo/#GO_0012505 GO_0012505 ) 
+    ( http://purl.obolibrary.org/obo/#GO\_0030313 GO\_0030313 ) 
+    ( http://purl.obolibrary.org/obo/#GO\_0012505 GO\_0012505 ) 
 }
 \end{lstlisting}
 
@@ -886,7 +969,18 @@ aforementioned script and prints the results to the screen.
 
 * Insert screenshot
 
-\subsubsection{Testing}
+\subsubsection{Testing and Documentation}
+
+The SPARQL extension implementation's design is described by this document. The
+script itself also includes ample commenting to help a reader understand the
+flow and meaning of the code involved in the software.
+
+In terms of user-end documentation, The web interface also includes a link to a 
+basic page with a basic description
+about the OWL block and how to use it - including examples. Furthermore, a
+README is included with the distribution of the project which describes its
+purpose as well as including information also found on the web interface's help
+page.
 
 \subsection{OWL Endpoint}
 
@@ -897,6 +991,10 @@ OWL reasoner. The software will load a set of ontologies which any queries given
 to the server will be run against, run the reasoner against them, and then set
 up a simple server to accept Manchester OWL Syntax requests and return the
 results in a machine-readable format.
+
+The software uses the object orientated paradigm (as is natural for Java), along
+with the observer pattern for the HTTP server and several hash map data models
+for storing and processing ontology data.
 
 * Insert class diagram
 
@@ -975,7 +1073,7 @@ entities and then converted back by the server - a single quote is converted to
 \%20, for example), an example may be:
 
 \begin{lstlisting}
-http://jagannath.pdn.cam.ac.uk:9090/?query=has_part\%20some\%20\%27plasma\%20membrane\%27
+http://jagannath.pdn.cam.ac.uk:9090/?query=has\_part\%20some\%20\%27plasma\%20membrane\%27
 \end{lstlisting}
 
 The listener sanitises the input and converts HTML entities back into their real
@@ -999,16 +1097,30 @@ functionality is not enabled in the prototype, since this is generally not
 useful for biological ontologies - which generally represent a structure such as
 an animal model, rather than an instance of a particular animal.
 
+Since these various classes are relevant in different types of use case, there
+is also a \emph{type} parameter available in the query - either \emph{subclass},
+\emph{equivalent}, \emph{superclass} or \emph{all}, which will return only its
+respective type of match from the given ontologies. If the parameter is omitted,
+then all types of match will be returned.
+
 Following this, it has a full list of relevant classes to the original query,
 which it then uses the GSON library\cite{gson} (a Google-produced JSON library) to convert 
 the classes into JSON format. The JSON is then returned to the Jetty
 RequestHandler, which returns the data to the requestee.
 
-\subsubsection{Testing}
+\subsubsection{Testing and Documentation}
 
-Testing it undertaken in this application by a number of unit tests. Basic
+Testing is undertaken in this application by a number of unit tests. Basic
 sanity tests such as checking the integrity of loaded data from an ontology are
 used alongside tests which query the server and expect a particular response.
+
+The program itself includes a full set of JavaDoc which describes the public and
+private methods included, designed to give an overview of the workflow of the
+program and flow involved. A README file included in the distribution of the
+program also describes basic information on how to run the program, as well as
+information about configuration, such as populating the file from which to load
+the ontologies. This document also provides an overview of the underlying design
+and decisions taken during the development of the program. 
 
 \section{Conclusion}
 
