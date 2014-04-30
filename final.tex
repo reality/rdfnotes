@@ -113,6 +113,14 @@ semantic web (such as RDF, SPARQL and OWL) and the fields which underlie them
 and applications which work with semantic web data will take place to find the
 most suitable and practical solution for the development of this project.
 
+The problem was eventually solved by developing an extension for the SPARQL
+language which includes a syntax allowing a user to make a remote request to an
+OWL data endpoint and integrating the resulting data into the SPARQL result set. 
+
+Since no such OWL data endpoint exists currently, supporting querying through
+Manchester OWL Syntax, one of these was also developed to support the SPARQL
+extension - incidentally opening up such functionality for other potential uses.
+
 Upon finishing the research project, the findings will be presented in the form
 of a scientific paper presenting the specification of the addition to the
 language, its impact and its uses.
@@ -167,7 +175,7 @@ formats, primarily led by W3C.
 
 There are several languages and specifications which are used in the Semantic
 Web, including RDF and OWL, among several technologies used to build, integrate
-and query date stored in them.
+and query data stored in them.
 
 \subsection{Technologies}
 
@@ -228,7 +236,8 @@ RDF/XML format, which is an expression of the graph data structures in the
 eXtensible Markup Language (XML) - a language designed to store and encode
 documents (as opposed to HTML, which is for formatting data). 
 
-However, there are a number of other serialisation formats for RDF data:
+However, there are a number of other serialisation formats for RDF data,
+including:
 
 \begin{description}
     \item[Turtle] This is a compact and human friendly format for storing RDF
@@ -297,6 +306,9 @@ The addition of this kind of data representation constitutes a simple IS-A
 relationships as described by description logic\cite{desclogic} - and through 
 doing so allows the data to actually represent meaning through the class 
 interrelations and restrictions (or axioms) in an \emph{ontology}.
+
+However, RDFS only supports the EL family of description logics and is therefore
+rather limited in terms of the knowledge and meaning that it can represent. 
 
 \subsubsection{OWL Ontologies}
 
@@ -395,7 +407,7 @@ Ontologies include a set of classes, which describe objects within the appropria
 domain (much like a declarative RDF description of an object with a set of predicates 
 and values). It also contains a set of axioms, or constraints, which describe the 
 interrelationships between the classes and in essence assign meaning to the
-knowledge represented in the ontology.
+data represented in the ontology.
 
 Ontologies can also include instantiations of classes, much like the
 instantiation of a class in an object orientated programming languages.
@@ -419,7 +431,6 @@ define the object property 'eats' to all animals, noting that it can contain any
 type of food. Furthermore, we then set additional constraints in the definitions
 of each animal - squirrels can only eat nuts, while turtles must eat some
 people.
-
 
 There are various classes or 'families' of description logics which provide various 
 types of rulesets and axioms at varying levels of complexity; following are some basic 
@@ -633,6 +644,12 @@ language sentence: \emph{An animal that eats humans} (the ommision of 'some'
 possible in the English language since it is inferred by the lack of a
 restriction such as 'only').
 
+Several other features of Manchester OWL Syntax also make it particularly
+suitable for querying classes, compact keywords for the existential quantification 
+of class properties are automatically formed as a part of the syntax after
+inferences are computed. For example, if a \emph{Person} object had a 'name'
+property, one could use the \emph{hasName} keyword.
+
 However, these uses are considered novel, and are not directly supported by the W3C
 specification for Manchester OWL Syntax which describes the language purely as
 one for the full representation of an ontology. As such, these uses are relatively rarely
@@ -653,8 +670,6 @@ However, while Jena is a large and well supported application, it suffers
 from a lack of extensibility, evidenced by a very large and widely undocumented 
 codebase. This means that it's rather difficult to use its implementation of
 SPARQL for additions or modifications to the syntax.
-
-\subsubsection{SPARQL Endpoints}
 
 \subsubsection{OWLAPI}
 
@@ -711,7 +726,7 @@ client applications using OWLAPI to access remote reasoners through providing a
 server adapter to an OWLAPI-abstracted reasoner. 
 
 The disadvantage of this software is that it requires the client application
-to use OWLAPI, or otherwise requires a complicated XML strucuture for the
+to use OWLAPI, or otherwise requires a complicated XML structure for the
 request of data - a normalised expression of an OWL class expression. This
 represents somewhat of a lock-in for the client software. 
 
@@ -863,7 +878,7 @@ a show the user is currently browsing have also starred.
 \subsection{Statement}
 
 \emph{The issue we strive to solve is that of creating a simple solution for querying
-OWL ontologies over the web.}
+OWL ontologies over the web, including the SPARQL query language.}
 
 An issue with the practical usability of OWL ontologies as a technology for the
 representation of knowledge on the semantic web, is that there is currently no
@@ -918,18 +933,32 @@ equests, and does not allow for easy human-interactable querying.
 
 \subsubsection{RDF and OWL Integration}
 
-While there is a lot of data stored in machine-processable formats on the semantic web, 
-there is a lot of information existing in different data models. This 
-tends to happen either because a particular technology was chosen due to 
-a particular featureset, for historical reasons or simply by organisational convention.
+Data integration is an important concept in the semantic web. Generally, an
+ontology described a particular \emph{domain}, or set of things which exist for
+a particular subject matter. Once this data has been collected and exists in a
+structured format and has meaning applied to it using description logic, one can
+generally combine and integrate various information from different domains to
+essentially discover or 'create' new knowledge.
 
-Therefore, data integration must be performed on the datasets to use them
-together and glean useful information from them. A major technology used for 
-data integration on the semantic web is SPARQL.
+To do this, data integration must take place. Languages like SPARQL allow the
+interpolation of data from ontologies from different sources and different
+domains, manipulating them to create meaningful products. 
+
+However, as described in the state of the semantic web there are several manners
+of storing structured data on the web - differing in language, syntax and ethos
+depending on history, necessary featuresets, use cases and fitness for purpose.
+
+Indeed, it often remains necessary to integrate data from these different
+sources. The multitudes of structured data found on the semantic web exist in different
+formats and with different tools used to query and manipulate them.
+
+Therefore, to garner useful information from the integration of these datasets
+one must be careful to do so without compromising the features available from a
+particular ontological technology.
 
 As explained in the previous section - SPARQL is a flexible technology and allows 
-data to be pulled from several different types of datastore (including Redis or an 
-OWL ontology) through providing an IRI to resource; then converting it to an RDF 
+data to be pulled from several different types of datastores (including Redis or an 
+OWL ontology) through providing an IRI to a resource; then converting it to an RDF 
 expressed datastore, and allowing regular SPARQL querying in this way. 
 
 This makes SPARQL a powerful tool for data integration, providing a common
@@ -942,16 +971,22 @@ functionalities when compared to working with OWL natively:
 \begin{itemize}
   \item Inability to perform on-the-fly semantic reasoning on ontologies.
   \item No ability to query the data in a native manner (using Manchester OWL Syntax).
-  \item Loss of certain descriptive logic modelling axioms available in OWL
+  \item Loss of certain expressive power and descriptive logic modelling axioms available in OWL
   ontologies when expressed in RDF.
-  \item Many OWL serialisation formats not supported by many RDF readers.
+  \item Many OWL serialisation formats not supported by many RDF readers used by
+  SPARQL.
 \end{itemize}
 
-Combined, these factors reduce the quality and ease of querying OWL ontologies when 
-using SPARQL. Therefore the problem exists in SPARQL that while it can pull data
-from different sources, the process of doing so compromises some of the endemic
-qualities of the integrated dataset - particularly in the case of OWL
-ontologies.
+Furthermore, many RDF datasets actually refer to OWL classes through
+annotations, but do not actually include the classes.
+
+Therefore, through converting an OWL ontology to an RDF-expressed datastore for
+the purpose of querying with SPARQL - it compromises the endemic qualities for
+which OWL is actually used.
+
+Successful and optimal data integration between RDF and OWL datasets would allow
+for querying and interpolation of the data without having to sacrifice any of
+the expressive power native to either technology.
 
 \subsubsection{Importance and Impact}
 
@@ -1063,6 +1098,19 @@ in the Manchester OWL Syntax.
 
 The following two pieces of software were developed to fit these requirements.
 
+A number of tools were used during the development process to ease navigation,
+research and debugging:
+
+\begin{description}
+    \item[vim] This text editor provides advanced features such as macros and
+    quick code navigation and debugging.
+    \item[Netbeans] This IDE was used for the Java development aspects of the
+    problem due to its advanced navigation, documentation and build tools.
+    \item[git] Git was used for all aspects of the project for version control.
+    New approaches were first prototyped in a new branch and successes were
+    merged back into the master development branch.
+\end{description}
+
 \subsection{SPARQL Extension}
 
 The SPARQL extension takes place in the form of a wrapper around a script which
@@ -1078,7 +1126,7 @@ the simplicity of the script.
 
 As described in the State of The Art, there is already a SERVICE keyword
 included in the SPARQL language which provides a good model for sending a text
-query to a remote endpoint. 
+query to a remote endpoint, in terms of the syntax. 
 
 \begin{lstlisting}
 SERVICE <http://nourishedcloud.com/turtles> { 
@@ -1097,7 +1145,7 @@ with the resultset. Therefore, my software includes an 'OWL' block to the SPARQL
 language, which uses a similar syntactic pattern to the SERVICE keyword:
 
 \begin{lstlisting}
-OWL SILENT <http://realispicio.us:9090> {
+OWL SILENT EQUIVALENT <http://realispicio.us:9090> {
     has_part some 'plasma membrane'
 }
 \end{lstlisting}
@@ -1112,6 +1160,10 @@ There are four properties to the above query:
     no results are integrated if a query fails but the query will continue,
     while if it isn't set and a query fails the SPARQL query will be halted and
     return an error message.
+    \item[EQUIVALENT] This flag may contain either \emph{EQUIVALENT},
+    \emph{SUPER} or \emph{SUB}, which indicates to the remote OWL endpoint
+    which type of class relevant to the following class description is required.
+    If ommitted, all are returned.
     \item[IRI] The IRI, contained between angled brackets following the OWL
     keyword, will define the URI of the remote OWL endpoint.
     \item[Query] Following, between the curly brackets, will be a Manchester OWL
@@ -1210,8 +1262,10 @@ VALUES (?iri ?id) {
 
 The web interface is also a simple piece of software, it existing as a simple
 HTML form which accepts a SPARQL (with potential OWL block) query along with a
-remote endpoint to execute it against. It then executes this query with the
-aforementioned script and prints the results to the screen.
+remote endpoint to execute it against. Upon submitting the HTML form, the script
+described in the previous section is passed POST data from the page, then
+executing the query and printing the results to the screen, or displaying an
+error message in the case of an error.
 
 * Insert screenshot
 
@@ -1257,10 +1311,12 @@ extensible and adaptable to new purposes.
 The initial stages of the program startup are the following:
 
 \begin{enumerate}
-    \item Load given ontologies into an ontology manager. 
+    \item Load specified ontologies into an ontology manager. 
     \item Perform reasoning on a set of ontologies and store the results.
     \item Generate a list of short-form labels for the classes in the
     ontologies.
+    \item Create a set of query managers with the loaded ontologies to handle
+    any future requests.
     \item Start a HTTP API listener with code to handle any queries.
 \end{enumerate}
 
@@ -1311,7 +1367,9 @@ library available for Java - implementing the required functionality without any
 bloat, using in-built Java classes and thereby working towards the goal of
 keeping the codebase light and extensible. The server uses an
 observer-observable patter, and a single class instantiates the server while a
-custom handler is attached to handle any requests.
+custom handler is attached to handle any requests. This is a common pattern used
+for HTTP APIs, and allows for easy extensions for handling further parameters
+and routes to the application.
 
 A request sent to the server is a simple GET request including the Manchester
 OWL Syntax format (with characters unacceptable in URIs parsed into HTML
@@ -1324,7 +1382,9 @@ http://jagannath.pdn.cam.ac.uk:9090/?query=has\_part\%20some\%20\%27plasma\%20me
 
 The listener sanitises the input and converts HTML entities back into their real
 characters. It then sends the Manchester OWL Syntax request to the
-RequestManager. 
+RequestManager, along with any other relevant parameters which were passed with
+the query. If the request was malformed, or did not include a query, an error
+will be returned encoded in a JSON document. 
 
 The RequestManager, containing the set of QueryEngines with the loaded
 ontologies, then uses the QueryParser class to convert the Manchester OWL Syntax 
@@ -1377,6 +1437,29 @@ and decisions taken during the development of the program.
 
 \section{Conclusion}
 
+\subsection{Evaluation}
+
+Through the research and execution of this project, it was found that there was
+indeed no current method by which to use a human-writable syntax to directy query OWL
+ontologies on the web. 
+
+It was found that SPARQL includes provisions for manipulating OWL ontologies by
+first converting them to an RDF format, however this sacrificed several endemic
+features of the OWL technology - including semantic reasoning and expressive
+power.
+
+Several approaches were attempted, and eventually these issues were solved by
+creating two pieces of software. One, an extension to the SPARQL language which
+allows a user to provide an OWL class description using the compact and human
+readable format and a remote URI, allows a user to return reasoned classes
+relevant to the given expression.
+
+The second was an 'OWL Endpoint,' supporting the OWL block functionality, allows
+the user to obtain classes from a number of configurable ontologies given a
+class description providied in a Manchester OWL Syntax string. This solution is
+useful both for the aforementioned SPARQL extension, but also for any potential
+application which requires the remote querying of OWL classes over the web.
+
 \subsection{Summary of Contributions}
 
 Implemented a demonstration of an extension to the SPARQL language to allow
@@ -1410,7 +1493,19 @@ to other languages either by myself or someone who needs it for a specific
 purpose with a specific set of technologies. PHP
 was chosen initially since the focus was on Web availability, and most web-based
 SPARQL endpoints which humans interact with
-are using PHP.
+are using PHP. However, there exist similar libraries for languages such as
+NodeJS, Python, C and others.
+
+\subsubsection{Provide Integrated SPARQOWL Endpoint}
+
+Another approach which could be taken to make this functionality more available
+is to create an instance of a SPARQL endpoint which actually includes support
+for the OWL block - or perhaps integrate it into the OWL endpoint itself. This
+presents several problems however, as current SPARQL endpoints generallu do not
+support federated queries themselves, and are usually loaded with their own
+datasets. Generic SPARQL endpoints are generally rather uncommon for security
+reasons - either the case of malformed and malicious datasets, or resource
+overuse.
 
 \subsubsection{Extend actual SPARQL Syntax}
 
@@ -1506,13 +1601,16 @@ specification for what constitutes an 'OWL endpoint,' similar
 to that which exists for SPARQL endpoints. This would be useful for an
 authoritative source on functionality, as well as being able
 to dictate necessary functionality for any further and alternative
-implementations.
+implementations. However, due to what is rather an implementation monopoly on
+OWL manipulation which lies with OWLAPI, it is unlikely that such functionality
+could be easily replicated using another library.
 
 Further configuratbility in the application would also be useful, from basic
 configuration such as the address and port to which the server binds, to which
 reasoner the application should use. This would be useful for allowing the
 application to support a wider range of uses without expecting users to have to
-modify it.
+modify it. This could be implemented either with command line arguments or
+creating a configuration file which contains such directives.
 
 There is also a bug whereby OWLAPI refuses to reason over ontologies loaded from
 the IMPORT closure of parent OWL ontologies - while also refusing to explicitly
@@ -1521,6 +1619,17 @@ amount of ontologies at once due to clashing. This could be solved by either
 somehow forcing OWLAPI to reason with and retrieve classes from these
 ontologies, or perhaps by dynamically ignoring the importation of further
 ontologies from import closures.
+
+Similar to SPARQL endpoints, which are often accompanied by web-frontends, it
+may be a good idea to develop a web-frontend which supports only Manchester OWL
+Syntax querying. This would assist in the goal of reaching feature parity in
+querying OWL ontologies.
+
+Further functionality could also be added in future to utilise more features of
+OWLAPI, such as the modification of ontologies. With these features, it could
+become more useful to front-end applications with write capabilities. This would
+probably require the implementation of authentication (using basic HTTP
+authentication or OAuth, for example) and further security features such as rate-limiting.
 
 \subsubsection{Possibly Extend OWLLink API}
 
