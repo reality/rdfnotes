@@ -71,7 +71,9 @@ example.
 
 Beyond integration, the work will also provide a service in that the development
 of a web-based OWL endpoint will further the availability of easily queriable
-OWL data on the World Wide Web - something which is thus far missing.
+OWL data on the World Wide Web - using a rather novel application of Manchester
+OWL Syntax, which is a human-readable OWL language primarily used for
+demonstration or the description of full OWL ontologies.
 
 Specifically, the project will be the creation of an addition to
 SPARQL\cite{sparql} (SPARQL Protocol And RDF Query Language) to allow remote
@@ -127,16 +129,36 @@ This meant that most of the data existed in the format of forward-facing
 documents accessible via URLs, content comprising of arbitrary natural language
 along with human-intended formatting and navigation techniques.
 
-The downside of this, is that without using advanced natural language 
-processing techniques, it's very difficult to then have software process and
-intercommunicate this data in a generalised and useful manner.
+This approach means that the data contained on the World Wide Web at large is
+generally unstructured and, and downside of this is that without using advanced 
+natural language  processing techniques, it's very difficult to then have s
+oftware process and intercommunicate this data in a generalised and useful manner.
 
 Therefore, the philosophy of the semantic web acknowledges this need for a
 reconciliation of certain data in a format which software can deal in. The
-Semantic Web\cite{semweb} describes the vision of a futuristic world of home
-automation and service intercommunication serving the human lifestyle, backed by
-these data formats which allow software to easily traverse the totality of
-available data and process it in a meaningful manner. 
+original Semantic Web manifesto\cite{semweb} describes the vision of a 
+futuristic world of home automation and service intercommunication serving 
+the human lifestyle, backed by these data formats which allow software to 
+easily traverse and process the totality of available data over this federation
+of structured data, providing practical uses for human use. This forms an
+underlying philosophy and set of technologies for ubiquitous computing,
+whereby computing evolves from its traditional role as directly interactable
+devices such as computers and laptops to become integrated into further
+aspects of human life in a latent manner.
+
+Examples given are those of a user being able to easily find an appropriate
+doctor's appointment, with the conditions that a doctor is nearby, available, 
+suitable for treating a particular condition and that such an appointment would
+not clash with the patient's timetable.
+
+To achieve this, structured data would be available for gaining data on:
+physical locations, doctor specialties and timetables for both the docotor and
+the originator of the request. 
+
+In the current day, it is likely that all of this information actually exists in
+a digitalised manner - however such systems do not intercommunicate due to no
+standard format or technology for the interpolation and processing of this data
+from several sources using a standard interface.
 
 To move forward and implement the Semantic web, we have since that date seen the
 production of a number of technologies moving towards this goal. Today, the
@@ -204,20 +226,47 @@ xmlns:si="http://www.w3schools.com/rdf/">
 RDF information is commonly stored, transmitted and worked with using the
 RDF/XML format, which is an expression of the graph data structures in the
 eXtensible Markup Language (XML) - a language designed to store and encode
-documents (as opposed to HTML, which is for formatting data). It may also be
-stored in a JSON (which is a notation more suited for native key-value stores),
-but what these all hold in common are their ease of computer-operability; such
-data expression formats are widely adopted and there exist hundreds of thousands
-of applications which rely on 
+documents (as opposed to HTML, which is for formatting data). 
 
-While XML and simliar already exist, and allow for easy storage, transmission 
-and manipulation by machines, there is an issue in that applications which use
-it often define their own schemas and constructs for data description. This is
-useful for the application itself and for applications which subscribe to its
-data schema, but requires extra work for applications which wish to use it.
+However, there are a number of other serialisation formats for RDF data:
 
-While key value data stores have many advantages over Relational Database
-Management Systems (RDBMS), they have the advantage that for certain datatypes,
+\begin{description}
+    \item[Turtle] This is a compact and human friendly format for storing RDF
+    data, providing abbreviations and short forms for common syntaxes and
+    data types. Often used for examples and tutorials.
+    \item[N-Triples] A simple line-based language which is not as compact as 
+    Turtle, but is easier to parse and demonstrates the underlying 'triple'
+    pattern of RDF (Subject, Predicate, Object).
+    \item[N-Quads] An extension on N-Triples used for the serialisation of
+    several RDF graphs.
+    \item[JSON-LD] A JSON based serlisation of RDF data. Universally easy to
+    parse and process using client libraries in a multitude of different
+    languages. Naturally suites key-value datastores very well.
+    \item[N3] A specification very similar to Turtle, but allows some additional
+    features such as the specification of inference rules (RDFS).
+    \item[RDF/XML] The most common serialisation format, and was developed as
+    the reference implementation for the RDF specification. Used to be in heavy
+    use but users have recently been preferring other formats due to their
+    friendliness both for users and machine-based processing - among this,
+    certain RDF graphs are not able to be represented in RDF/XML due to
+    restrictions on namespaces permitted by the XML syntax.
+\end{description}
+
+The Web and applications on it currently use a wide range of methods to store
+and seralise and thereby store and communicate data. There include XML, JSON,
+YAML and various relational database systems such as MySQL.
+
+While XML and other data serialisation formats already exist, and allow for easy 
+storage, transmission and manipulation by machines, there is an issue in that 
+applications which use them often define their own schemas and constructs for 
+data description. This is useful for the application itself and for applications 
+which subscribe to its data schema, but requires extra work for applications which 
+wish to use it. Using RDF, there is a standard data format end therefore every
+application knows the structure and schema used to describe a document.
+
+While key value data stores (such as Redis or MongoDB) have many advantages over 
+Relational Database Management Systems (RDBMS), RDBMS have the advantage that for 
+certain datatypes,
 for example a 'date' are centrally configured and understood by all instances of
 that database driver (MySQL, for example). Key-value data is much more freeform,
 consisting of nothing but a key and a value. 
@@ -229,13 +278,14 @@ specification for resource description, by providing a known data format with
 widely known vocabularies included in predicates within the data to describe 
 the datatypes within it - the existence and extensibility of said vocabularies 
 meaning it can universally define and describe much more complicated and 
-specific datatypes than can RDBMS systems.
+specific datatypes than can RDBMS systems (as well as already including a number
+of built-in datatypes for general use, such as xsd:int).
 
 Additional to RDF, the RDF Schema technology was later developed. This is
 designed to buld on the limited vocabulary of RDF to provide additional features
 for knowledge representation by providing additional syntax for describing
-classes. An example of this is the ability to describe a class's types or define
-an overall hierarchy.
+classes. An example of this is the ability to describe a class's types or
+relationshpis between types.
 
 \begin{lstlisting}
 PREFIX animal: <http://realispicio.us>
@@ -243,24 +293,75 @@ animal:turtle    rdfs:subClassOf    animal:animal
 \end{lstlisting}
 
 The above example shows the description of a cat as being a subclass of animal.
-The addition of this kind of data representation constitutes description
-logic\cite{desclogic} - and through doing so allows the data to actually
-represent meaning through the class interrelations and restrictions (or axioms)
-in an \emph{ontology}.
+The addition of this kind of data representation constitutes a simple IS-A
+relationships as described by description logic\cite{desclogic} - and through 
+doing so allows the data to actually represent meaning through the class 
+interrelations and restrictions (or axioms) in an \emph{ontology}.
 
 \subsubsection{OWL Ontologies}
 
 An ontology is a formal representation of a set of concepts and their
 interrelationships, types and hierarchical standings. RDF (and RDFS moreso) is
 rather naturally suited to storing this type of data, being that it represents 
-a graph, however technologies such as OWL (The Web Ontology Language) have been 
+a graph. However technologies such as OWL (The Web Ontology Language) have been 
 developed post-RDF to provide additional suitability and a greater featureset 
 for this paradigm of knowledge representation.
 
+Previous to OWL, there has been a long history of the attempt for knowledge
+representation in the field of computer science, and particularly
+artificial intelligence, growing from the initial idea of storing semantic
+machine-readable data alongside semi-structured and forward facing HTML
+documents. 
+
+\begin{description}
+    \item[SHOE] Simple HTML Ontology Extensions were developed to create simple
+    extensions for the HTML language to allow semantic data to be included
+    inline. Developed around 1996, it is considered a precursor to the larger
+    semantic web movement.\cite{shoe}
+    \item[OIL] The Ontology Inference Layer was a previous attempt at creating
+    an ontology infrastructure in the Semantic Web, and is similarly based on
+    the concepts of description logic.
+    \item[DAML] DAML was an early attempt to provide structured relationships
+    between semantic data on the web, developing a language related to XML more
+    suited to describing the relationships between objects described.
+    \item[DAML+OIL] This project worked to combine the works of OIL and DAML, to
+    create a syntax layered on RDF and XML which could be used to create
+    ontologies describing classes and rulesets which governed relationships
+    between them.
+\end{description}
+
+These previous research projects and their resulting technologies were the
+precursors to the OWL technology, and eventually their concepts formed much of
+the basis for the OWL ontology framework.
+
 Despite the misleading acronym, OWL itself actually includes a large amount of
-different individual languges depending on the version of the specification used
-and the set of features required from the knowledge representation, as well as
-whether humans or machines are the primary audience for use. 
+different individual languges and profiles depending on the version of the 
+specification used and the set of features required for the particular
+requirements neccesarily for an individual project of knowledge
+representation - as well as whether humans or machines are the primary audience 
+for use. 
+
+Initially, there are several serialisation formats and lanauges which can be
+used to describe an OWL ontology:
+
+\begin{description}
+    \item[RDF/XML] A common format used to serialise is in an RDF/XML, which
+    provides mappings for OWL constructs and can express many axioms
+    reasonably. As an extension, these can also be described by the alternative
+    RDF serialisation languages listed above. This means the ontologies can also
+    be described in the number of RDF serialisation formats described above.
+    \item[OWL2 XML Syntax] There is a particular XML format description which
+    described the serialisation of a full OWL ontology within it.
+    \item[Manchester OWL Syntax] A compact and human-readable syntax can express
+    either full OWL ontologies or be used (in novel cases) to describe class
+    expressions for an OWL ontology. Note all OWL ontologies can be fully
+    expressed using this syntax at present.
+    \item[Functional Syntax] Allows ontologies to be written compactly through
+    methods such as provision of IRI truncation.
+\end{description}
+
+A commonly used language for the human representation of OWL ontologies is
+Manchester OWL syntax, which can be used either to describe full ontologies:
 
 \begin{lstlisting}
 Prefix: a: <http://realispicio.us/owl/animals/>
@@ -285,9 +386,8 @@ Class: People
   SubClassOf: Food
 \end{lstlisting}
 
-Exampled above, Manchester OWL Syntax is commonly used for human-readable
-representation of OWL ontologies. The example defines a simple OWL ontology with
-a small set of classes and some relationships between them. Similar to RDF it
+The above example is the definition of a small OWL ontology with a small set of 
+classes and some relationships between them. Similar to RDF it
 may also contain a set of prefixes usable for shortening URIs. Each ontology
 must also be identified by a unique URI, stated in the Ontology declaration.
 
@@ -297,6 +397,12 @@ and values). It also contains a set of axioms, or constraints, which describe th
 interrelationships between the classes and in essence assign meaning to the
 knowledge represented in the ontology.
 
+Ontologies can also include instantiations of classes, much like the
+instantiation of a class in an object orientated programming languages.
+Similarly, it must include definitions for each of the properties, the
+definitions of which must fall within the ruleset, or \emph{axioms} 
+described by the class definitions.
+
 The set of available axioms, constraints and relationships available in OWL
 ontologies allow it to effectively model description logic\cite{desclogic}. 
 
@@ -305,7 +411,7 @@ logic is that of IS-A; a relationship whereby one class is a subclass or 'type'
 of another - the definition of the superclass then implying that of the
 subclass. This is achieved in OWL ontologies with the 'SubClassOf' axiom,
 evidenced above by describing that the Squirrel and the Turtle are both
-subclasses of Animal, while Nuts and People are subclasses of Food. 
+subclasses of Animal, while Nuts and People are subclasses of Food.
 
 Another common axiom described in ontologies are existential quantifications, or
 rather, expressing constraints on a property assigned to a class. Above, we
@@ -314,22 +420,14 @@ type of food. Furthermore, we then set additional constraints in the definitions
 of each animal - squirrels can only eat nuts, while turtles must eat some
 people.
 
-Despite being a simple ontology, the logical implications of even a small set of
-axioms are great (though not necessarily explicitly stated, especially in the
-case of existential quantification). For example, an individual turtle as described 
-above would be considered to pass the rules of the ontology only if they eat some 
-people, therefore a turtle is free to eat nuts. On the other hand, a squirrel is limited
-to eating only nuts - so a squirrel observed eating people is likely not a
-squirrel at all.
 
-There are
-various classes or 'families' of description logics which provide various types
-of rulesets and axioms at varying levels of complexity; following are some basic 
+There are various classes or 'families' of description logics which provide various 
+types of rulesets and axioms at varying levels of complexity; following are some basic 
 families found in the realm of knowledge representation:
 
 \begin{description}
     \item[EL] A small description logic which provides conjunction (AND) and
-    existential quantification.
+    existential quantification - supported by RDFS.
     \item[EL++] The most common description logic used in ontologies - an
     extension of EL logic designed to be minimal while containing the main 
     expressions used by large-scale ontologies for most practical 
@@ -338,6 +436,20 @@ families found in the realm of knowledge representation:
     supports role hierarchies, extra cardinality restrictions and other
     features. 
 \end{description}
+
+Both of the axioms used in the animal ontology described above would be
+supported by an RDFS ontology, since it supports the EL family of description
+logics (IS-A and existential quantification) - however more advanced axioms
+included in other description logics require more expressive power which are
+available in OWL ontologies.
+
+Despite being a simple ontology, the logical implications of even a small set of
+axioms are great (though not necessarily explicitly stated, especially in the
+case of existential quantification). For example, an individual turtle as described 
+above would be considered to pass the rules of the ontology only if they eat some 
+people, therefore a turtle is free to eat nuts. On the other hand, a squirrel is limited
+to eating only nuts - so a squirrel observed eating people is likely not a
+squirrel at all.
 
 The testing of implications of the description logic used to represent
 knowledge in OWL ontologies is supported by semantic reasoners, which are 
@@ -348,9 +460,29 @@ which can fully evaluate every consequence of the logic which exists in an
 ontology, allowing larger and more complicated ontologies to exist while 
 continuing to contain validated consistent meaning.
 
-There are also OWL profiles\cite{owlprofiles}, which are cut down versions of the full OWL
-specification which trade some features for the efficiency of reasoning. Each
-implements different sets of description logic families, tuned to differing
+There are several OWL variations, which exist as variants of the full OWL
+specification and differ depending on their expressive power.
+
+\begin{description}
+    \item[OWL LITE] Designed to support cases in which ontologies require only
+    the definition of classes and their basic hierarchies, also supporting
+    limited cardinality constraints. Originally developed as a first-step
+    migration choice for ontologies currently implemented in other systems. Not
+    in wide use, since constrains can easily be broken with complicated rules
+    amounting to similar implementation complexities found in OWL DL.
+    \item[OWL DL] A sublanguage designed to provide maximum expressive power,
+    while retaining terminability and decidability. It includes all OWL language
+    constructs, though places certain restrictions upon cases in which they may
+    be used. 
+    \item[OWL Full] Uses different semantics to the other OWL sublgnauges, and
+    is designed with compatibility with RDFS in mind. This means it is
+    undecidable, and therefore standard OWL reasoning softwares cannot be
+    performed on such ontologies.
+\end{description}
+
+There are also OWL profiles\cite{owlprofiles}, which are variations on the OWL
+language specification, which trade some features for the efficiency of reasoning.
+Each implements different sets of description logic families, tuned to differing
 knowledge representation approaches meaning each is useful in different situations.
 
 \begin{description}
@@ -402,14 +534,10 @@ profile\cite{reasonercompare}\cite{reasonerbenchmark}.
 
 Several reasoners (e.g. Pellet and RacerPro) use the analytic tableau method for
 reasoning, which determines the satisfiability of sets of rules or formulas
-representing first-order logic. The aim being to progressively simplify formulae
+representing first-order logic; the aim being to progressively simplify formulae
 until rules are exhausted or maximum simplicity is reached. Other reasoners,
 such as KAON2, use algorithms which convert the knowledge base to a Disjunctive
 Datalog Program.\cite{ddp}
-
-* Describe OWL
-* Description Logic
-* Semantic reasoners
 
 \subsubsection{SPARQL}
 
@@ -463,19 +591,53 @@ available for use.
 
 \subsubsection{Manchester OWL Syntax}
 
-Manchester OWL Syntax is a class of OWL language which is designed to be
-human-friendly, it can be used to represent full ontologies - though a certain
-few applications such as Protoge utilise the simple syntax to allow users to
-return classes relevant to a given expression.
+Manchester OWL Syntax is a class of OWL language which is designed to be compact
+and human-friendly, primarily developed to provide a near human-language syntax
+for interacting with ontologies for use by non-logicians who work in scientific
+domains which make use of ontologies - thereby making it easier to work with in
+a wider range of domains. It can also be utilised to represent full OWL
+ontologies, however its method of using a frame based approach to data
+representation means that certain ontologies cannot be directly analogoous to
+other forms of ontology serialisations - however simple transformations can be
+applied to extract axioms from frames and thereby represent the same ontology in
+a more traditional format. 
+
+Beyond the syntax's primary uses as a simple syntax for the explanation of
+ontologies in a human-readable format, certain applications such as Protege
+utilise the language to allow users to provide a simple set of criteria as a 
+Manchester OWL Syntax string. These are then converted to a format which
+constitutes a class description and can be used to return a set of relevant
+classes within an ontology which fit the query. 
+
+To support this, such applications apply further extensions to the language
+which allow a more human-friendly to the syntax by allowing the natural IRI
+identifier for a class to be replaced with a human-readable string - using the
+label string included in the class definition such as \emph{fish}, rather than
+its IRI such as \emph{GO:3218742}.
+
+With such extensions, one could make a query of the example ontology described
+above with such a string:
 
 \begin{lstlisting}
-Pizza and hasTopping some FishTopping
+Animal that eats some Human
 \end{lstlisting}
 
-An example of how Manchester OWL Syntax for querying classes is given above, it
-succinctly describes the class involved (Pizza) and then the constraint that
-class must match (hasTopping some FishTopping), with Pizza classes having a
-Topping subclass which may be of the instance FishTopping.
+The above example represents a class description which begins with a class
+\emph{Animal}, describing that all matches in the expression must be subclasses
+of Animal. It goes on to use \emph{that eats} to replace a restriction on the
+\emph{eats} property of an animal, then defining \emph{some Human} - meaning the
+property eats must contain the Human class.
+
+This is relatively close to how this description may be described in a natural
+language sentence: \emph{An animal that eats humans} (the ommision of 'some'
+possible in the English language since it is inferred by the lack of a
+restriction such as 'only').
+
+However, these uses are considered novel, and are not directly supported by the W3C
+specification for Manchester OWL Syntax which describes the language purely as
+one for the full representation of an ontology. As such, these uses are relatively rarely
+implemented, and while they are available in certain desktop applications there
+exists no way for such queries to be made over the web.
 
 \subsection{Frameworks and Implementations} 
 
@@ -503,9 +665,22 @@ support for several manners of OWL languages and syntaxes, converting these to
 normative OWL class expressions. It also supports reasoning ontologies with all
 of the major semantic reasoners (FaCT++, HermiT, Pellet etc).
 
-Many other OWL-involved technologies use this framework, including OWLLink and Jena's 
-OWL components. As a client library it is well supported and well documented
-(with a full set of JavaDoc), with much sample code available.
+It allows users to load a number of ontologies from a number of sources, either
+locally or from a given URI, then providing reasoning services and from that
+point allowing the actual modification of an ontology including the addition of
+axioms and then checking that logical consistency is maintained.
+
+It also supports serialisation of ontologies in a number of different manners,
+including coversion to different machine-readable storage formats, as well as
+output into human readable formats including HTML (similar to generating a HTML
+site detailing JavaDoc for a piece of software).
+
+The functionality for loading several ontologies at once into one manager from
+several sources means that it is a useful tool for data integration - dealing
+with data from multiple sources.
+
+For this reason, it underlies many front-facing technologies which work with OWL
+ontologies, including Protege, OWLLink and Jena's OWL components.
 
 There are alternatives for client libraries involved in manipulating OWL
 ontologies, many individual reasoners include their own libraries - however the
@@ -518,9 +693,12 @@ querying and representing OWL ontologies.
 \subsubsection{Protégé}
 
 Protégé is an open source project which provides a desktop-based graphical user
-interface for editing, building and reasoning with ontologies, which supports
+interface for editing, visualising, building and reasoning with ontologies, which supports
 the development of plugins. It is considered the premier tool for working with
 OWL ontologies within the scientific community.
+
+It supports a wide range of serialisation formats, including RDF/XML, OWL/XML,
+OWL Functional Syntax, Turtle, KRSS and OBO.
 
 One of its interesting features is that of a novel use of Manchester OWL Syntax
 to query classes and return those relevant (described above).
@@ -540,6 +718,58 @@ represents somewhat of a lock-in for the client software.
 Additionally, it does not accept Manchester OWL Syntax for queries - this could 
 be remedied by parsing Manchester OWL Syntax into a class description understood 
 by an OWLLink server on the clientside (a provision made available by OWLAPI).
+
+This means that what could be a relatively simple query for retrieving a number
+of relevant classes given a simple Manchester OWL Syntax query must be a rather
+complicated and lengthly request. While such requests are usually made in XML,
+they may also take the form of functional or S-Expression syntax, which
+are similarly verbose.
+
+\begin{lstlisting}
+<RequestMessage xsi:schemaLocation="http://www.owllink.org/owllink# http://www.owllink.org/owllink-20091116.xsd">
+  <CreateKB kb="http://www.owllink.org/ont/families">
+    <Prefix name="families" fullIRI="http://example.com/owl/families/"/>
+    <Prefix name="otherOnt" fullIRI="http://example.org/otherOntologies/families/"/>
+  </CreateKB>
+  <LoadOntologies kb="http://www.owllink.org/ont/families">
+    <OntologyIRI IRI="http://www.owllink.org/ontologies/primer.owl"/>
+  </LoadOntologies>
+  <IsClassSatisfiable kb="http://www.owllink.org/ont/families">
+    <owl:Class abbreviatedIRI="families:Man"/>
+  </IsClassSatisfiable>
+  <GetDisjointClasses kb="http://www.owllink.org/ont/families">
+    <owl:Class abbreviatedIRI="families:Father"/>
+  </GetDisjointClasses>
+  <GetSubClasses kb="http://www.owllink.org/ont/families" direct="true">
+    <owl:Class abbreviatedIRI="families:Parent"/>
+  </GetSubClasses>
+  <GetSuperClasses kb="http://www.owllink.org/ont/families" direct="true">
+    <owl:Class abbreviatedIRI="families:Grandfather"/>
+  </GetSuperClasses>
+  <GetSubClasses kb="http://www.owllink.org/ont/families" direct="false">
+    <owl:Class abbreviatedIRI="owl:Nothing"/>
+    </GetSubClasses>
+  <ReleaseKB kb="http://www.owllink.org/ont/families"/>
+</RequestMessage>
+\end{lstlisting}
+
+The above request is a sample class query for an OWLLink request, which requests
+classes which are:
+
+\begin{itemize}
+    \item Equivalent to Man
+    \item Not a Father
+    \item Are a subclass of Parent
+    \item Superclasses of Grandfrather
+\end{itemize}
+
+This could be expressed in Manchester OWL Syntax as follows:
+
+\begin{lstlisting}
+Man and DisjointWith Father and SubClassOf Parent and SuperClassOf Grandfather
+\end{lstlisting}
+
+TODO: revise
 
 Alternatively, a wrapper around the OWLLink server could be made, using OWLAPI
 to convert the Manchester OWL Syntax to the class expression, then passing it to
@@ -635,7 +865,7 @@ a show the user is currently browsing have also starred.
 \emph{The issue we strive to solve is that of creating a simple solution for querying
 OWL ontologies over the web.}
 
-An issue with the usability of OWL ontologies as a technology for the
+An issue with the practical usability of OWL ontologies as a technology for the
 representation of knowledge on the semantic web, is that there is currently no
 way to easily query data from it in a human interactable way over the Web.
 Furthermore, this issue means it is difficult to integrate data from OWL
@@ -652,9 +882,9 @@ RDF/XML or OWL/Functional) and the query languages (such as SPARQL) which can be
 used by humans to manipulate and integrate the datastores.
 
 For both RDF and OWL datastores it is currently easy to interact with the data
-over the web in a machine-processable manner - primarily through codebases
-utilising XML parsers or through bespoke libraries and server software such as 
-OWLAPI and OWLLink.
+over the web in a machine-processable manner - primarily through codebases and
+libraries utilising XML parsers or through bespoke libraries and server software 
+such as OWLAPI and OWLLink.
 
 For human-querying, the area is highly-developed for RDF and similar datastores, 
 with SPARQL allowing users to write queries to manipulate data both locally and
@@ -682,9 +912,9 @@ On the other hand, the OWLLink server exists for querying OWL ontologies. It
 sits above OWLAPI and connects to a reasoner to expose various reasoner
 functionality over the web - including querying for classes. However, the API it
 exposes it very complicated and does not support querying with the Manchester
-OWL Syntax. This generally both locks client applications into using OWLAPI (and
-therefore Java) to make requests, and does not allow for easy human-interactable 
-querying. 
+OWL Syntax. This generally
+both locks client applications into using OWLAPI (and therefore Java) to make r
+equests, and does not allow for easy human-interactable querying. 
 
 \subsubsection{RDF and OWL Integration}
 
@@ -822,6 +1052,15 @@ as per the problem statements:
     block extensions.
 \end{itemize}
 
+Thus, initially research was completed into the semantic web technologies
+themselves (RDF/OWL), and then the fields which underlie them (description
+logic). It was decided that SPARQL already exists as a powerful and flexible
+tool for querying RDF (and similar datasets) on the web, while no such provision
+existed for OWL ontologies. Therefore, it was decided that the most efficient
+and practically useful approach to providing web-based OWL ontology querying was
+to combine SPARQL with the compact and human-readable querying methods available
+in the Manchester OWL Syntax. 
+
 The following two pieces of software were developed to fit these requirements.
 
 \subsection{SPARQL Extension}
@@ -918,6 +1157,13 @@ the IRI and class names of said classes, then replacing the OWL block in
 the query itself with the data about the returned classes inline in the query.
 This would look like the following when querying relevant classes to the adaxial
 cell in the Zebrafish ontology\cite{zfin}:
+
+If the optional \emph{SILENT} keyword was used in conjunction with the OWL block
+in question, and there was an error receiving any data from the remote OWL
+enpoint, then the OWL block is simply deleted and the program continues either
+processing and remaining OWL blocks, or will continue to execute the SPARQL
+query. Otherwise, the program will exit and return an error message to the user stating
+the the OWL request failed - including an error message returned from the OWL endpoint.
 
 \begin{lstlisting}
 VALUES (?iri ?id) { 
@@ -1085,7 +1331,13 @@ ontologies, then uses the QueryParser class to convert the Manchester OWL Syntax
 query to a class expression, utilising a number of in-built OWLAPI queries to do
 so. A class expression is a generalised and standardised machine-readable OWL
 class format usable with other OWLAPI functions (without the need for individual
-conversion). The RequestManager then iterates the QueryEngines and thereby the
+conversion). The most common error encountered in such a request is a malformed
+Manchester OWL Syntax query, and in such a case the parser will return an error
+stating the nature of the error; when this happens, it is caught and an error
+message is sent back to the originator of the request with the error message
+encoded in JSON.
+
+The RequestManager then iterates the QueryEngines and thereby the
 ontologies, asking each for a set of relevant classes to the class expression
 passed as a parameter - then collating the accrued HashMaps into a single
 HashMap.
@@ -1101,7 +1353,8 @@ Since these various classes are relevant in different types of use case, there
 is also a \emph{type} parameter available in the query - either \emph{subclass},
 \emph{equivalent}, \emph{superclass} or \emph{all}, which will return only its
 respective type of match from the given ontologies. If the parameter is omitted,
-then all types of match will be returned.
+then all types of match will be returned. If no relevant classes are found, an
+empty set will be returned.
 
 Following this, it has a full list of relevant classes to the original query,
 which it then uses the GSON library\cite{gson} (a Google-produced JSON library) to convert 
@@ -1206,15 +1459,19 @@ interface).
 \subsubsection{Data Integration From Other Sources}
 
 While connecting OWL and RDF datastores in this manner already allows for a lot
-of new work to be done, there are other semantic data
-formats which currently do not support easy data integration. I think that SPARQL 
-serves as a good base for any further data integration,
-given its wide adoption and currently existing support for many different types
-of data.
+of new work to be done, there are other semantic data formats which currently do 
+not support easy data integration. I think that SPARQL serves as a good base for 
+any further data integration, given its wide adoption and currently existing 
+support for many different types of data. Examples of ontology formats which
+could be integrated are CASL, CycL, DOGMA and KIF.
 
-TODO examples
-
-* More practical uses for the implemented functionality
+Such additions could potentially save a lot of work which takes place in
+manually creating mappings between existing ontologies and technologies which
+are designed for intercommunication; for example, mappings between RDF/OWL ontologies and the
+SNOMED medical vocabularies. In a world of data integration which does not
+compromise the endemic features of a particular technology, such a choice would
+not impact the global federation, integration and intercommunication between
+different sources for practical uses.
 
 \subsubsection{More Functionality in the OWL API}
 
@@ -1231,13 +1488,18 @@ To remedy this, I would plan on keeping the current functionality in terms of a
 default set of ontologies, but implement an additional query
 parameter which allows the user to list a set of URIs pointing at ontologies to
 reason and query. While this would be a useful feature, it
-presents several design challenges - such as security (care would have to be
-taken so that a user could not break the server by pointing it
-at some malicious form of broken ontology, or crash the software by passing an
-ontology too large for the computer to handle), and additionally
-it would be difficult to succinctly include a list of ontologies in an OWL block
-- for these purposes it may be better to run different endpoints
-for different sets of relevant and interrelated ontologies.
+presents several design challenges: 
+
+\begin{itemize}
+    \item Care would have to be taken to prevent damage to the server by being
+    passed an ontology either maliciously formed or too large for the server to
+    reasonably process.
+    \item Additions would have to be made to the OWL block syntax in the SPARQL
+    extension to specify a set of ontologies to reason over.
+    \item Ontology loading and reasoning would have to take place upon the
+    request being executed, which could potentially be rather slow depending on
+    the size and amount of ontologies.
+\end{itemize}
 
 Whilst going forward with this project, it may also be worth drafting a formal
 specification for what constitutes an 'OWL endpoint,' similar
@@ -1365,6 +1627,12 @@ queries is faesible.
   PHP-SPARQL-Lib,
   https://github.com/cgutteridge/PHP-SPARQL-Lib,
   Accessed 23/2/2014.
+
+\bibitem{shoe}
+  Luke, S., Spector, L, and Rager, D. 
+  Ontology-Based Knowledge Discovery on the World-Wide Web. 
+  Workshop on Internet-Based Information Systems at the 13th National Conference on Artificial Intelligence. 
+  1996.
 
 http://www.plosbiology.org/article/info%3Adoi%2F10.1371%2Fjournal.pbio.1000247#pbio-1000247-g007
 
