@@ -73,7 +73,7 @@ Beyond integration, the work will also provide a service in that the development
 of a web-based OWL endpoint will further the availability of easily queriable
 OWL data on the World Wide Web - using a rather novel application of Manchester
 OWL Syntax, which is a human-readable OWL language primarily used for
-demonstration or the description of full OWL ontologies.
+demonstration or the description of full OWL ontologies.\cite{manchesterowl}
 
 Specifically, the project will be the creation of an addition to
 SPARQL\cite{sparql} (SPARQL Protocol And RDF Query Language) to allow remote
@@ -81,7 +81,7 @@ OWL\cite{owlprimer} querying to be performed using the Manchester OWL Syntax
 on a custom OWL endpoint and the results be integrated into the SPARQL result-set.
 
 There is a similar construct already included in the SPARQL language called
-\emph{SERVICE}, which is unfortunately not suitable for use in this project
+\emph{SERVICE}\cite{sservice}, which is unfortunately not suitable for use in this project
 because it won't support the syntax of the OWL language within it (however, it
 might be worth contacting the developers of the SPARQL specification asking if a
 generalisation would be prudent).
@@ -135,7 +135,10 @@ sharing resources intended for reading and interaction by humans.
 
 This meant that most of the data existed in the format of forward-facing 
 documents accessible via URLs, content comprising of arbitrary natural language
-along with human-intended formatting and navigation techniques.
+along with human-intended formatting and navigation techniques. This is
+sometimed referred to as the \emph{syntactic web}, describing a situation in
+which given data on the web (such as natural language) are only given meaning by
+off-line consensus and arbitrary agreement.\cite{syntweb}
 
 This approach means that the data contained on the World Wide Web at large is
 generally unstructured and, and downside of this is that without using advanced 
@@ -161,17 +164,19 @@ not clash with the patient's timetable.
 
 To achieve this, structured data would be available for gaining data on:
 physical locations, doctor specialties and timetables for both the docotor and
-the originator of the request. 
+the originator of the request. Furthermore, striving utilise the World Wide 
+Web's capacity and infrastructure for linked data, creating a publishing
+paradigm for linked structured data\cite{linkdata}.
 
 In the current day, it is likely that all of this information actually exists in
 a digitalised manner - however such systems do not intercommunicate due to no
 standard format or technology for the interpolation and processing of this data
-from several sources using a standard interface.
+from several sources using a standard interface. 
 
 To move forward and implement the Semantic web, we have since that date seen the
 production of a number of technologies moving towards this goal. Today, the
 Semantic Web exists as a movement promoting standardised structured data
-formats, primarily led by W3C.
+formats, primarily led by W3C.\cite{revisited}
 
 There are several languages and specifications which are used in the Semantic
 Web, including RDF and OWL, among several technologies used to build, integrate
@@ -182,7 +187,7 @@ and query data stored in them.
 \subsubsection{RDF}
 
 One of the primary technologies used to represent this machine-workable data on
-the web is the Resource Description Framework (RDF), which are a set of
+the web is the Resource Description Framework (RDF)\cite{rdf}, which are a set of
 specifications which describe a general methodology for conceptualising and
 modelling data, intended for solutions in which the data needs to be processed
 by applications.
@@ -190,7 +195,7 @@ by applications.
 It forms a graph of statements representing metadata about resources on the
 World Wide Web in the form of simple statements in the terms of simple
 properties and property values. Each RDF statement is formed of a Subject, a
-Predicate and an Object:
+Predicate and an Object - a data format commonly referred to as a triple:
 
 \begin{description}
     \item[Subject] The object being described.
@@ -233,7 +238,7 @@ xmlns:si="http://www.w3schools.com/rdf/">
 
 RDF information is commonly stored, transmitted and worked with using the
 RDF/XML format, which is an expression of the graph data structures in the
-eXtensible Markup Language (XML) - a language designed to store and encode
+eXtensible Markup Language (XML)\cite{xml} - a language designed to store and encode
 documents (as opposed to HTML, which is for formatting data). 
 
 However, there are a number of other serialisation formats for RDF data,
@@ -290,7 +295,7 @@ meaning it can universally define and describe much more complicated and
 specific datatypes than can RDBMS systems (as well as already including a number
 of built-in datatypes for general use, such as xsd:int).
 
-Additional to RDF, the RDF Schema technology was later developed. This is
+Additional to RDF, the RDF Schema\cite{rdfs} technology was later developed. This is
 designed to buld on the limited vocabulary of RDF to provide additional features
 for knowledge representation by providing additional syntax for describing
 classes. An example of this is the ability to describe a class's types or
@@ -308,11 +313,12 @@ doing so allows the data to actually represent meaning through the class
 interrelations and restrictions (or axioms) in an \emph{ontology}.
 
 However, RDFS only supports the EL family of description logics and is therefore
-rather limited in terms of the knowledge and meaning that it can represent. 
+rather limited in terms of the knowledge and meaning that it can represent -
+only being able to represent subclasses and subproperties (subsumption).
 
 \subsubsection{OWL Ontologies}
 
-An ontology is a formal representation of a set of concepts and their
+An ontology\cite{ontology} is a formal representation of a set of concepts and their
 interrelationships, types and hierarchical standings. RDF (and RDFS moreso) is
 rather naturally suited to storing this type of data, being that it represents 
 a graph. However technologies such as OWL (The Web Ontology Language) have been 
@@ -330,16 +336,16 @@ documents.
     extensions for the HTML language to allow semantic data to be included
     inline. Developed around 1996, it is considered a precursor to the larger
     semantic web movement.\cite{shoe}
-    \item[OIL] The Ontology Inference Layer was a previous attempt at creating
+    \item[OIL] The Ontology Inference Layer\cite{oil} was a previous attempt at creating
     an ontology infrastructure in the Semantic Web, and is similarly based on
     the concepts of description logic.
-    \item[DAML] DAML was an early attempt to provide structured relationships
+    \item[DAML] DAML\cite{daml} was an early attempt to provide structured relationships
     between semantic data on the web, developing a language related to XML more
     suited to describing the relationships between objects described.
     \item[DAML+OIL] This project worked to combine the works of OIL and DAML, to
-    create a syntax layered on RDF and XML which could be used to create
-    ontologies describing classes and rulesets which governed relationships
-    between them.
+    create a syntax layered on RDF and XML (essentially an extension of RDFS) which 
+    could be used to create ontologies describing classes and rulesets which governed 
+    relationships between them.\cite{damloil}
 \end{description}
 
 These previous research projects and their resulting technologies were the
@@ -363,11 +369,11 @@ used to describe an OWL ontology:
     RDF serialisation languages listed above. This means the ontologies can also
     be described in the number of RDF serialisation formats described above.
     \item[OWL2 XML Syntax] There is a particular XML format description which
-    described the serialisation of a full OWL ontology within it.
+    described the serialisation of a full OWL ontology within it.\cite{owl2xml}
     \item[Manchester OWL Syntax] A compact and human-readable syntax can express
     either full OWL ontologies or be used (in novel cases) to describe class
     expressions for an OWL ontology. Note all OWL ontologies can be fully
-    expressed using this syntax at present.
+    expressed using this syntax at present.\cite{manchesterowl}
     \item[Functional Syntax] Allows ontologies to be written compactly through
     methods such as provision of IRI truncation.
 \end{description}
@@ -521,34 +527,54 @@ profile\cite{reasonercompare}\cite{reasonerbenchmark}.
 
 \begin{description}
     \item[Sesame] Open source software for reasoning with with RDF and RDFS
-    information - deals with OWL ontologies only on the level of RDF graphs.
+    information\cite{sesame} - deals with OWL ontologies only on the level of RDF graphs.
     Allows connections to various RDBMS, including MySQL and PostgreSQL.
     \item[OWLIM] Uses the TRREE engine for RDFS and OWL reasoning. Offers
     configurable reasoning support and performance for various uses. By default,
     it performs reasoning and query evaluation in memory.
     \item[KAON2] A Java reasoner which implements an extension of SHIQ rules with
     extensions for DL-safe rules (a certain subset of axioms and rules which
-    ensure decidability). It utilises novel methods to apply known
+    ensure decidability).\cite{kaon} It utilises novel methods to apply known
     deductive techniques such as magic sets or join-order optimisations
-    to DL reasoning.
+    to DL reasoning, making it particularly useful for reasoning over ontologies
+    with large ABoxes.\cite{kaonabox}
     \item[HermiT] Fully supports DL rules, though support for full SHIQ is still
     in progress. The algorithms used are much more deterministic than others in
-    use.
+    use.\cite{hermit}
     \item[RacerPro] Optimised tableau reasoner for SHIQ(D). Supports integers
-    and real numbers. Implemented in LISP and is commercial software.
+    and real numbers. Implemented in LISP and is commercial
+    software.\cite{racerpro}
     \item[Pellet] Supports SROIQ reasoning with simple data types, supporting a
-    tableau based decision procedure. 
+    tableau based decision procedure.\cite{pellet}
     \item[ELK] Ontology reasoner with the primary goal of supporting the full
     OWL 2 EL profile in a fast manner. Still somewhat in progress, but is included
-    in OWLAPI as a default reasoner. 
+    in OWLAPI as a default reasoner.\cite{elk}
+    \item[FaCT++] Reasoner which implements the tableau procedure to support the
+    OWL DL language, including further data types such as strings and
+    integers.\cite{fact}
 \end{description}
 
-Several reasoners (e.g. Pellet and RacerPro) use the analytic tableau method for
+The approaches a reasoner then takes to confirm satisfiability and consistency of
+a knowledge base differ, but generally begin with normalisation and then
+conversion to an internal format. 
+
+The knowlege base is generally seperated into seperate 'boxes' used for
+reasoning. The set of axioms applied to classes in the ontology are seperated
+into what is commonly referred to as the \emph{TBox}, and then a set of axioms
+which apply to class instances are seperated into the \emph{ABox}. 
+
+Following this, reasoners compute and cache the taxonomy of the ontology before 
+finally performing a satisfiability check.
+
+Many reasoners (e.g. Pellet and RacerPro) use the analytic
+tableau\cite{tableau} method for
 reasoning, which determines the satisfiability of sets of rules or formulas
 representing first-order logic; the aim being to progressively simplify formulae
-until rules are exhausted or maximum simplicity is reached. Other reasoners,
-such as KAON2, use algorithms which convert the knowledge base to a Disjunctive
-Datalog Program.\cite{ddp}
+until rules are exhausted or maximum simplicity is reached, deciding subsumption
+problems for pairs of concepts in the ontology.
+
+Other reasoners, such as KAON2, use algorithms which convert the knowledge base 
+to a Disjunctive Datalog Program.\cite{ddp}
 
 \subsubsection{SPARQL}
 
@@ -557,13 +583,13 @@ were described, these are designed to be interacted with by machines - however,
 a number of technologies also exist for human-interaction with the datastores
 including querying and data manipulation.
 
-SPARQL (SPARQL Protocol And RDF Query Language) is a query language similar to
+SPARQL\cite{sparql} (SPARQL Protocol And RDF Query Language) is a query language similar to
 SQL which allows the querying and manipulation of RDF (and similar) datastores.
 This is a human-interactable language, which means that while it has a
 non-freeform syntax it is designed to be used by humans (as well as computers)
 to interact with data on the semantic web.
 
-SPARQL queries usually consist of the following:
+SPARQL queries usually consist of the following\cite{sparqlquerying}:
 
 \begin{description}
     \item[PREFIX] A list of prefix declarations, which can be used to shorten
@@ -590,7 +616,8 @@ offered by OWL are lost - including certain axioms, and on-the-fly reasoning.
 Another important quality of SPARQL is that it's federated, data may be loaded
 remotely over the web by providing an IRI to the datastore. Also, the language
 includes a 'SERVICE' keyword, which allows a query to be sent to a remote SPARQL
-endpoint and be executed and results be returned and included in the resultset.
+endpoint and be executed and results be returned and included in the
+resultset.\cite{sservice}
 
 A SPARQL endpoint is a simple interface which accepts a HTTP query including a
 query parameter, then runs the query and will return the results in one of 
@@ -606,7 +633,7 @@ Manchester OWL Syntax is a class of OWL language which is designed to be compact
 and human-friendly, primarily developed to provide a near human-language syntax
 for interacting with ontologies for use by non-logicians who work in scientific
 domains which make use of ontologies - thereby making it easier to work with in
-a wider range of domains. It can also be utilised to represent full OWL
+a wider range of domains.\cite{manchesterowl} It can be utilised to represent full OWL
 ontologies, however its method of using a frame based approach to data
 representation means that certain ontologies cannot be directly analogoous to
 other forms of ontology serialisations - however simple transformations can be
@@ -660,12 +687,12 @@ exists no way for such queries to be made over the web.
 
 \subsubsection{Jena}
 
-Jena is a large semantic web framework for Java, which provides an API for
+Jena\cite{jena} is a large semantic web framework for Java, which provides an API for
 reading several technologies including RDF and OWL, and its main uses are
 the extraction of data from various database systems and re-representing them in
-an RDF format. 
+an RDF format. It includes ARQ\cite{arq}, which is an implementation of the SPARQL query language
+alongside its own implementation of RDF model representation.\cite{jenardf}
 
-It includes ARQ, which is an implementation of the SPARQL query language
 However, while Jena is a large and well supported application, it suffers 
 from a lack of extensibility, evidenced by a very large and widely undocumented 
 codebase. This means that it's rather difficult to use its implementation of
@@ -804,11 +831,16 @@ for general application.\cite{semweb}
 
 Despite the lack of adoption of semantic web technologies for general use, there
 are a few initiatives which work to make large amounts of structured data
-available. A good example of this is DBPedia, which aims to extract
+available. The Linking Open Data project is a community driven effort to develop
+a set of standards for best practice in creating large sources for linked data
+on the Web, or 'data gardens'.
+
+A good example of a 'data garden' is DBPedia, which aims to extract
 information from the online encyclopaedia website Wikipedia and provide it in a
 structured and machine-processable format (RDF(S)), available for free on the 
-web. At the time of writing, it had collected information on more than four 
-million objects and had collected more than 470 million 'facts' overall.
+web.\cite{dbpedia} At the time of writing, it had collected information on more than four 
+million objects and had collected more than 470 million 'facts' overall,
+describing more than 2.6 million entities.\cite{dbpediastats}
 
 An important thing to note about this dataset is the grand effort which is made
 to make the information freely and easily available in a number of manners and
@@ -855,7 +887,7 @@ is going into creating RDF/OWL mappings for these ontologies.
 
 The PHARMASurveyor software has also been developed to consider a large number
 of criterion to suggest a safest drug treatment regiment for a particular
-patient - providing an optimised profile for treatment. 
+patient - providing an optimised profile for treatment.\cite{psurveyor} 
 
 \subsubsection{Commercial Use}
 
@@ -871,7 +903,8 @@ Various other companies such as BBC, Facebook and Tesco also publish RDF data
 online. In the case of the BBC, this is done to aid cross-site navigation by
 querying for sites which may be related to a site the user is currently browsing
 - for example, finding other websites for television shows in which the cast for
-a show the user is currently browsing have also starred.
+a show the user is currently browsing have also
+starred.\cite{bbcone}\cite{bbctwo}
 
 \section{Problem Statement}
 
@@ -905,7 +938,7 @@ For human-querying, the area is highly-developed for RDF and similar datastores,
 with SPARQL allowing users to write queries to manipulate data both locally and
 through web-based endpoints. The language also supports federation through the
 SERVICE keyword, which allows the user to send further data queries to remote
-SPARQL endpoints and thereby further datasets. This is incredible useful for
+SPARQL endpoints and thereby further datasets.\cite{sservice} This is incredible useful for
 making useful data easily available and integratable to those working with it.
 
 However, for OWL ontologies the situation is somewhat different, the 'querying'
@@ -959,7 +992,8 @@ particular ontological technology.
 As explained in the previous section - SPARQL is a flexible technology and allows 
 data to be pulled from several different types of datastores (including Redis or an 
 OWL ontology) through providing an IRI to a resource; then converting it to an RDF 
-expressed datastore, and allowing regular SPARQL querying in this way. 
+expressed datastore, and allowing regular SPARQL querying in this
+way.\cite{sparqlandowl}
 
 This makes SPARQL a powerful tool for data integration, providing a common
 language usable for querying over multiple types of datasets in a single query.
@@ -1032,19 +1066,20 @@ storage formats such as JSON.
 
 Conversely, underlying technologies and applications on the web have meanwhile 
 been moving towards use of lightweight frameworks and languages. Modern applications 
-have been opting for abstract key-value stores such as Redis, which suffers from
+have been opting for abstract key-value stores such as Redis, which suffer from
 a lack of additional features available from ontologies. 
 
 Transmission of data on the web tends to favour simple REST APIs which feature 
-simple HTTP requests with parameters, instead of the complicated XML structures 
+simple HTTP requests with parameters\cite{rest}, instead of the complicated XML structures 
 necessary to query data from OWLLink servers for example. On the other hand, the
 previously discussed SPARQL data endpoints provide a simple HTTP interface for
 SPARQL queries, so while the underlying technology can be anything - the
 interface means that any application can easily make use of the service.
 
-The effectiveness of the availability of these simpler and more accessible 
-technologies can be seen in the massive number of web and desktop applications
-which make use of these standard interfaces and APIs.
+The effectiveness of the availability of these simpler, more responsible and 
+accessible 
+technologies\cite{uptake} can be seen in the massive number of web and desktop applications
+which make use of these standard interfaces and RESTful APIs. 
 
 Therefore, I believe it may be that the lack of takeup of knowledge-representation systems
 for front-end applications may be the down to the lack of lightweight libraries, 
@@ -1126,7 +1161,7 @@ the simplicity of the script.
 
 As described in the State of The Art, there is already a SERVICE keyword
 included in the SPARQL language which provides a good model for sending a text
-query to a remote endpoint, in terms of the syntax. 
+query to a remote endpoint, in terms of the syntax.\cite{sservice} 
 
 \begin{lstlisting}
 SERVICE <http://nourishedcloud.com/turtles> { 
@@ -1535,7 +1570,7 @@ supported.
 
 As previously mentioned, there is already a SERVICE keyword included in the
 SPARQL language, which follows the model of sending a HTTP query to a remote
-endpoint and integrating the results with the local resultset. 
+endpoint and integrating the results with the local resultset.\cite{sservice}
 
 Currently, it only supports remote SPARQL endpoints, and it was decided not to 
 extend this construct to include support for an OWL endpoint during the course
@@ -1652,11 +1687,27 @@ queries is faesible.
  W3C,
  2004.
 
+\bibitem{jena}
+  McBride, Brian.
+  "Jena: A semantic web toolkit." 
+  IEEE Internet computing 6.6
+  (2002): 55-59.
+
 \bibitem{sparql}
   Eric Prud'hommeaux, Andy Seaborne,
   \emph{SPARQL Query Language for RDF}.
   W3C,
   January 2008.
+
+\bibitem{fact}
+  Tsarkov, Dmitry, and Ian Horrocks. "FaCT++ description logic reasoner: System description." Automated reasoning. Springer Berlin Heidelberg, 2006. 292-297.
+
+\bibitem{sparqlquerying}
+  Quilitz, Bastian, and Ulf Leser. 
+  "Querying distributed RDF data sources with SPARQL." 
+  The Semantic Web: Research and Applications. 
+  Springer Berlin Heidelberg, 
+  2008. 524-538.
 
 \bibitem{pharmgkb}
   Allison, M., NCATS launches drug repurposing program.
@@ -1668,6 +1719,11 @@ queries is faesible.
   Linking PharmGKB to phenotype studies and animal models of disease for drug repurposing. 
   Pacific Symposium on Biocomputing (PSB), 
   2012: p. 388-399.
+
+\bibitem{sparqlandowl}
+  Kollia, Ilianna, Birte Glimm, and Ian Horrocks. "SPARQL query answering over
+  OWL ontologies." The Semantic Web: Research and Applications. Springer Berlin
+  Heidelberg, 2011. 382-396.
 
 \bibitem{zfin}
   Sprague, J., L. Bayraktaroglu, Y. Bradford, T. Conlin, N. Dunn, D. Fashena, K. Frazer, M. Haendel, D.G. Howe, J. Knight, P. Mani, S.A. Moxon, C. Pich, S. Ramachandran, K. Schaper, E. Segerdell, X. Shao, A. Singer, P. Song, B. Sprunger, C.E. Van Slyke, and M. Westerfield, 
@@ -1686,6 +1742,11 @@ queries is faesible.
   Reducing SHIQ Description Logic to Disjunctive Datalog Programs,
   KR,
   2004.
+
+\bibitem{owl2xml}
+  Motik, Boris, Bijan Parsia, and Peter F. Patel-Schneider. "OWL 2 web ontology
+  language XML serialization." W3C Recommendation, W3C–World Wide Web Consortium
+  (2009).
 
 \bibitem{flybase}
   Drysdale, R. and FlyBase Consortium, FlyBase : a database for the Drosophila research community.
@@ -1731,6 +1792,11 @@ queries is faesible.
   Drug Discov Today,
   2012.
 
+\bibitem{tableau}
+  M. Schmidt-Schauß and G. Smolka. 
+  Attributive concept descriptions with complements.
+  Artificial Intelligence, 48(1):1–26, 1991.
+
 \bibitem{phpsparqllib}
   Christopher Gutteridge & University of Southampton,
   PHP-SPARQL-Lib,
@@ -1743,12 +1809,20 @@ queries is faesible.
   Workshop on Internet-Based Information Systems at the 13th National Conference on Artificial Intelligence. 
   1996.
 
-http://www.plosbiology.org/article/info%3Adoi%2F10.1371%2Fjournal.pbio.1000247#pbio-1000247-g007
+\bibitem{revisited}
+  Shadbolt, Nigel, Wendy Hall, and Tim Berners-Lee. "The semantic web
+  revisited." Intelligent Systems, IEEE 21.3 (2006): 96-101.
 
 \bibitem{obofoundry}
   Obo Foundry
   http://obofoundry.org/
   Retrieved 17/04/2014.
+
+\bibitem{syntweb}
+  Robie, Jonathan, et al. 
+  "The syntactic Web: Syntax and semantics on the Web."
+  Markup Languages: Theory and Practice 3.4 
+  (2001): 411-440.
 
 \bibitem{phenoscape}
   Dahdul, W.M., J.P. Balhoff, J. Engeman, T. Grande, E.J. Hilton, C. Kothari, H. Lapp, J.G. Lundberg, P.E. Midford, T.J. Vision, M. Westerfield, and P.M. Mabee, 
@@ -1790,6 +1864,135 @@ and solutions,
   Pushing the EL Envelope,
   IJCAI'05 Proceedings of the 19th international joint conference on Artificial intelligence
   2005. p. 364-369.
+
+\bibitem{dbpedia}
+  Auer, Sören, et al. "Dbpedia: A nucleus for a web of open data." The semantic
+  web. Springer Berlin Heidelberg, 2007. 722-735.
+
+\bibitem{dbpediastats}
+  Bizer, Christian, et al. "DBpedia-A crystallization point for the Web of
+  Data." Web Semantics: Science, Services and Agents on the World Wide Web 7.3
+  (2009): 154-165.
+
+\bibitem{damloil}
+  Horrocks, Ian. 
+  "DAML+OIL: a Description Logic for the Semantic Web." 
+  IEEE Data Eng. Bull. 25.1 
+  (2002): 4-9.
+
+\bibitem{daml}
+  Coalition, DAML-S., et al. 
+  "DAML-S: Web service description for the semantic Web." 
+  The Semantic Web-ISWC. 2002.
+
+\bibitem{oil}
+  Fensel, Dieter, et al. 
+  "OIL: An ontology infrastructure for the semantic web."
+  Intelligent Systems, IEEE 16.2 
+  (2001): 38-45.
+
+\bibitem{psurveyor}
+  Hines, Lisa E., Daniel C. Malone, and John E. Murphy. "Recommendations for
+  Generating, Evaluating, and Implementing Drug‐Drug Interaction Evidence."
+  Pharmacotherapy: The Journal of Human Pharmacology and Drug Therapy 32.4
+  (2012): 304-313.
+
+\bibitem{sesame}
+Broekstra, Jeen, Arjohn Kampman, and Frank Van Harmelen. "Sesame: A generic
+architecture for storing and querying rdf and rdf schema." The Semantic Web—ISWC
+2002. Springer Berlin Heidelberg, 2002. 54-68.
+
+\bibitem{rdfs}
+  Brickley, Dan, and Ramanathan V. Guha. 
+  "RDF vocabulary description language 1.0: RDF schema." 
+  (2004).
+
+\bibitem{rdf}
+  Klyne, Graham, and Jeremy J. Carroll. 
+  "Resource description framework (RDF): Concepts and abstract syntax." 
+  (2006).
+
+\bibitem{ontology}
+  Smith, Barry. 
+  "Ontology." 
+  The Blackwell guide to the philosophy of computing and information 
+  (2003): 153-166.
+
+\bibitem{jenardf}
+  McBride, Brian. 
+  "Jena: Implementing the RDF Model and Syntax Specification."
+  SemWeb. 
+  2001.
+
+\bibitem{linkdata}
+  Heath, Tom, and Christian Bizer. 
+  "Linked data: Evolving the web into a global data space." 
+  Synthesis lectures on the semantic web: theory and technology 1.1
+  (2011): 1-136.
+
+\bibitem{arq}
+  Jena, Joseki, and Pellet Fuseki. 
+  "Semantic web frameworks." 
+  (2004).
+
+\bibitem{pellet}
+  Sirin, Evren, et al. "Pellet: A practical owl-dl reasoner." Web Semantics:
+  science, services and agents on the World Wide Web 5.2 (2007): 51-53.
+
+\bibitem{elk}
+  Kazakov, Yevgeny, Markus Krötzsch, and František Simančík. "ELK: a reasoner
+  for OWL EL ontologies." System Description (2012).
+
+\bibitem{racerpro}
+  Haarslev, Volker, et al. "The RacerPro knowledge representation and reasoning
+  system." Semantic Web 3.3 (2012): 267-277.
+
+\bibitem{hermit}
+  Shearer, Rob, Boris Motik, and Ian Horrocks. "HermiT: A Highly-Efficient OWL
+  Reasoner." OWLED. Vol. 432. 2008.
+
+\bibitem{xml}
+  Bray, Tim, et al. 
+  "Extensible markup language (XML)." 
+  World Wide Web Consortium Recommendation REC-xml-19980210. 
+  http://www. w3. org/TR/1998/REC-xml-19980210
+  (1998).
+
+\bibitem{rest}
+  Rodriguez, Alex. 
+  "Restful web services: The basics." 
+  Online article in IBM DeveloperWorks Technical Library 36 (2008).
+
+\bibitem{uptake}
+  Heath, Tom, John Domingue, and Paul Shabajee.
+  "User interaction and uptake challenges to successfully deploying Semantic Web technologies." (2006).
+
+\bibitem{sservice}
+  Quilitz, Bastian, and Ulf Leser. 
+  "Querying distributed RDF data sources with SPARQL." 
+  The Semantic Web: Research and Applications. Springer Berlin Heidelberg, 
+  2008. 524-538.
+
+\bibitem{manchesterowl}
+  Horridge, Matthew, et al. "The Manchester OWL Syntax." OWLed. Vol. 216. 2006.
+
+\bibitem{bbcone}
+  Raimond, Yves, et al. "Use of Semantic Web technologies on the BBC Web Sites."
+  Linking Enterprise Data. Springer US, 2010. 263-283.
+
+\bibitem{bbctwo}
+  Kobilarov, Georgi, et al. "Media meets semantic web–how the bbc uses dbpedia
+  and linked data to make connections." The semantic web: research and
+  applications. Springer Berlin Heidelberg, 2009. 723-737.
+
+\bibitem{kaon}
+  Motik, Boris, and R. Studer. "KAON2–A scalable reasoning tool for the semantic
+  web." Proceedings of the 2nd European Semantic Web Conference (ESWC’05),
+  Heraklion, Greece. Vol. 17. 2005.
+
+\bibitem{kaonabox}
+  Motik, Boris, and Ulrike Sattler. "Practical DL Reasoning over large ABoxes
+  with KAON2." (2006).
 
 Example OWLLink query:
 http://owllink.org/owllink-httpxml-20091116/additional-examples/owllink-example-ClassQueries-request-20091116.xml
