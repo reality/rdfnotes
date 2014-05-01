@@ -247,10 +247,10 @@ including:
 \begin{description}
     \item[Turtle] This is a compact and human friendly format for storing RDF
     data, providing abbreviations and short forms for common syntaxes and
-    data types. Often used for examples and tutorials.
+    data types. Often used for examples and tutorials.\cite{turtle}
     \item[N-Triples] A simple line-based language which is not as compact as 
     Turtle, but is easier to parse and demonstrates the underlying 'triple'
-    pattern of RDF (Subject, Predicate, Object).
+    pattern of RDF (Subject, Predicate, Object).\cite{ntriples}
     \item[N-Quads] An extension on N-Triples used for the serialisation of
     several RDF graphs.
     \item[JSON-LD] A JSON based serlisation of RDF data. Universally easy to
@@ -444,14 +444,14 @@ families found in the realm of knowledge representation:
 
 \begin{description}
     \item[EL] A small description logic which provides conjunction (AND) and
-    existential quantification - supported by RDFS.
+    existential quantification - supported by RDFS.\cite{rdfs}
     \item[EL++] The most common description logic used in ontologies - an
     extension of EL logic designed to be minimal while containing the main 
     expressions used by large-scale ontologies for most practical 
     applications.\cite{elplusplus}
     \item[SHIQ(D)] Popular description logic for ontologies and reasoners which
     supports role hierarchies, extra cardinality restrictions and other
-    features. 
+    features.\cite{shiq}
 \end{description}
 
 Both of the axioms used in the animal ontology described above would be
@@ -531,7 +531,7 @@ profile\cite{reasonercompare}\cite{reasonerbenchmark}.
     Allows connections to various RDBMS, including MySQL and PostgreSQL.
     \item[OWLIM] Uses the TRREE engine for RDFS and OWL reasoning. Offers
     configurable reasoning support and performance for various uses. By default,
-    it performs reasoning and query evaluation in memory.
+    it performs reasoning and query evaluation in memory.\cite{owlim}
     \item[KAON2] A Java reasoner which implements an extension of SHIQ rules with
     extensions for DL-safe rules (a certain subset of axioms and rules which
     ensure decidability).\cite{kaon} It utilises novel methods to apply known
@@ -736,11 +736,11 @@ querying and representing OWL ontologies.
 
 Protégé is an open source project which provides a desktop-based graphical user
 interface for editing, visualising, building and reasoning with ontologies, which supports
-the development of plugins. It is considered the premier tool for working with
+the development of plugins.\cite{prot} It is considered the premier tool for working with
 OWL ontologies within the scientific community.
 
 It supports a wide range of serialisation formats, including RDF/XML, OWL/XML,
-OWL Functional Syntax, Turtle, KRSS and OBO.
+OWL Functional Syntax, Turtle, KRSS and OBO.\cite{protowl}
 
 One of its interesting features is that of a novel use of Manchester OWL Syntax
 to query classes and return those relevant (described above).
@@ -750,7 +750,7 @@ to query classes and return those relevant (described above).
 OWLLink is a specification which defines a machine-usable API for OWL reasoners,
 the reference implementation for which is OWLLink API. The OWLLink API provides
 client applications using OWLAPI to access remote reasoners through providing a
-server adapter to an OWLAPI-abstracted reasoner. 
+server adapter to an OWLAPI-abstracted reasoner.\cite{owllink} 
 
 The disadvantage of this software is that it requires the client application
 to use OWLAPI, or otherwise requires a complicated XML structure for the
@@ -765,7 +765,7 @@ This means that what could be a relatively simple query for retrieving a number
 of relevant classes given a simple Manchester OWL Syntax query must be a rather
 complicated and lengthly request. While such requests are usually made in XML,
 they may also take the form of functional or S-Expression syntax, which
-are similarly verbose.
+are similarly verbose.\cite{owllinkprotocol}
 
 \begin{lstlisting}
 <RequestMessage xsi:schemaLocation="http://www.owllink.org/owllink# http://www.owllink.org/owllink-20091116.xsd">
@@ -881,9 +881,10 @@ drugs\cite{semwebdiscovery}.
 
 Efforts are also being made in the medical industry to utilise the semantic web
 for improved data interlinking. Several ontologies of medical vocabularies actually
-already exist in various formats such as SNOMED - however these suffer from not
+already exist in various formats such as SNOMED\cite{snomed2} - however these suffer from not
 being able to interlink and integrate with other data sources. Therefore, work
-is going into creating RDF/OWL mappings for these ontologies. 
+is going into creating RDF/OWL mappings for these
+ontologies.\cite{snomed1} 
 
 The PHARMASurveyor software has also been developed to consider a large number
 of criterion to suggest a safest drug treatment regiment for a particular
@@ -1598,7 +1599,7 @@ could be integrated are CASL, CycL, DOGMA and KIF.
 Such additions could potentially save a lot of work which takes place in
 manually creating mappings between existing ontologies and technologies which
 are designed for intercommunication; for example, mappings between RDF/OWL ontologies and the
-SNOMED medical vocabularies. In a world of data integration which does not
+SNOMED medical vocabularies\cite{snomed1}. In a world of data integration which does not
 compromise the endemic features of a particular technology, such a choice would
 not impact the global federation, integration and intercommunication between
 different sources for practical uses.
@@ -1907,6 +1908,15 @@ architecture for storing and querying rdf and rdf schema." The Semantic Web—IS
   "RDF vocabulary description language 1.0: RDF schema." 
   (2004).
 
+\bibitem{snomed1}
+  Hyvönen, Eero, et al. "Building a national semantic web ontology and ontology
+  service infrastructure–the FinnONTO approach." The Semantic Web: Research and
+  Applications. Springer Berlin Heidelberg, 2008. 95-109.
+
+\bibitem{snomed2}
+  Schulz, Stefan, et al. "The Semantics of Procedures and Diseases in SNOMED®
+  CT." Methods of Information in Medicine 45.4 (2006): 354.
+
 \bibitem{rdf}
   Klyne, Graham, and Jeremy J. Carroll. 
   "Resource description framework (RDF): Concepts and abstract syntax." 
@@ -1942,6 +1952,11 @@ architecture for storing and querying rdf and rdf schema." The Semantic Web—IS
 \bibitem{elk}
   Kazakov, Yevgeny, Markus Krötzsch, and František Simančík. "ELK: a reasoner
   for OWL EL ontologies." System Description (2012).
+
+\bibitem{owlim}
+  Kiryakov, Atanas, Damyan Ognyanov, and Dimitar Manov. "OWLIM–a pragmatic
+  semantic repository for OWL." Web Information Systems Engineering–WISE 2005
+  Workshops. Springer Berlin Heidelberg, 2005.
 
 \bibitem{racerpro}
   Haarslev, Volker, et al. "The RacerPro knowledge representation and reasoning
@@ -1993,6 +2008,35 @@ architecture for storing and querying rdf and rdf schema." The Semantic Web—IS
 \bibitem{kaonabox}
   Motik, Boris, and Ulrike Sattler. "Practical DL Reasoning over large ABoxes
   with KAON2." (2006).
+
+\bibitem{owllink}
+  Liebig, Thorsten, et al. "OWLlink." Semantic Web 2.1 (2011): 23-32.
+
+\bibitem{turtle}
+  Beckett, David, and Tim Berners-Lee. "Turtle-terse RDF triple language." W3C
+  Team Submission 14 (2008).
+
+\bibitem{ntriples}
+  Beckett, Dave, and Art Barstow. "N-Triples." W3C RDF Core WG Internal Working
+  Draft (2001).
+
+\bibitem{owllinkprotocol}
+  Liebig, Thorsten, Marko Luther, and Olaf Noppens. "The OWLlink Protocol." OWLED.
+2009.
+
+\bibitem{prot}
+Noy, Natalya F., et al. "Protege-2000: an open-source ontology-development and
+knowledge-acquisition environment." AMIA Annu Symp Proc. Vol. 953. 2003.
+
+\bibitem{protowl}
+Knublauch, Holger, et al. "The Protégé OWL plugin: An open development
+environment for semantic web applications." The Semantic Web–ISWC 2004. Springer
+Berlin Heidelberg, 2004. 229-243.
+
+\bibitem{shiq}
+  Motik, Boris, Ulrike Sattler, and Rudi Studer. "Query answering for OWL-DL
+  with rules." The Semantic Web–ISWC 2004. Springer Berlin Heidelberg, 2004.
+  549-563.
 
 Example OWLLink query:
 http://owllink.org/owllink-httpxml-20091116/additional-examples/owllink-example-ClassQueries-request-20091116.xml
