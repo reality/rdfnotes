@@ -1056,6 +1056,16 @@ whether the observed similarities can provide insights into drug-target relation
 confirming resultant hypotheses independently on human subjects through tests.
 (?)
 
+The specific advantage of this project is the ability to retrieve IDs from
+OWL ontology class descriptions (such as a the id for a class for the
+acetylcholine-gated channel complex - GO\_0044459) from an OWL query using a
+Manchester OWL Syntax query, and then use these results to search RDF
+datastores for models which are annoted using the IDs for these properties.
+
+This is currently not possible without a user manually using a piece of software
+such as Protege to manually query OWL ontologies for annotation IDs, and then
+copying them into a SPARQL query to find annotated models.
+
 \subsubsubsection{Accessibility}
 
 One thing that seems lacking in implementations of semantic web technologies as
@@ -1121,6 +1131,8 @@ as per the problem statements:
     within the SPARQL query language.
     \item Provide a Web interface for users to make SPARQL queries with the OWL
     block extensions.
+    \item Allow such returned data to be used to find RDF datastore models in 
+    SPARQL annotated with the class IDs returned from OWL classes.
 \end{itemize}
 
 Thus, initially research was completed into the semantic web technologies
@@ -1132,7 +1144,15 @@ and practically useful approach to providing web-based OWL ontology querying was
 to combine SPARQL with the compact and human-readable querying methods available
 in the Manchester OWL Syntax. 
 
-The following two pieces of software were developed to fit these requirements.
+The following two pieces of software were developed to fit these requirements,
+and the basic workflow is shown in figure \ref{fig:sparqowl_request}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\textwidth]{sparqowl.png}
+  \caption{Basic Workflow of a SPARQOWL Request}
+  \label{fig:sparqowl_request}
+\end{figure}
 
 A number of tools were used during the development process to ease navigation,
 research and debugging:
@@ -1146,177 +1166,6 @@ research and debugging:
     New approaches were first prototyped in a new branch and successes were
     merged back into the master development branch.
 \end{description}
-
-\subsection{SPARQL Extension}
-
-The SPARQL extension takes place in the form of a wrapper around a script which
-sends a SPARQL query, first evaluating the script for any OWL blocks - in the
-case of which it sends an OWL query to the endpoint and includes any resulting
-classes in the query in place of the OWL block.
-
-The script is largely procedural, making use of functions for the processing of
-the query and OWL data. This approach was chosen over object orientation due to
-the simplicity of the script.
-
-\subsubsection{SPARQL Syntax}
-
-As described in the State of The Art, there is already a SERVICE keyword
-included in the SPARQL language which provides a good model for sending a text
-query to a remote endpoint, in terms of the syntax.\cite{sservice} 
-
-\begin{lstlisting}
-SERVICE <http://nourishedcloud.com/turtles> { 
-    ?s tu:name ?name . ?s tu:owner ?owner
-}
-\end{lstlisting}
-
-Evidenced above, the SERVICE block includes a URI which indicates a remote
-SPARQL endpoint, then includes a SPARQL query to send the server - upon
-execution and return of the results they are included in the resultset of the
-rest of the query.
-
-For an OWL query the pattern will be very similar - we want to send a Manchester
-OWL Syntax Query to a remote OWL endpoint, and combine the resulting classes
-with the resultset. Therefore, my software includes an 'OWL' block to the SPARQL 
-language, which uses a similar syntactic pattern to the SERVICE keyword:
-
-\begin{lstlisting}
-OWL SILENT EQUIVALENT <http://realispicio.us:9090> {
-    has_part some 'plasma membrane'
-}
-\end{lstlisting}
-
-There are four properties to the above query:
-
-\begin{description}
-    \item[OWL] The OWL keyword will designate the beginning of an OWL block
-    denoting the beginning of the description for a query to be sent to a remote
-    OWL endpoint.
-    \item[SILENT] This is an optional keyword, which if included will mean that
-    no results are integrated if a query fails but the query will continue,
-    while if it isn't set and a query fails the SPARQL query will be halted and
-    return an error message.
-    \item[EQUIVALENT] This flag may contain either \emph{EQUIVALENT},
-    \emph{SUPER} or \emph{SUB}, which indicates to the remote OWL endpoint
-    which type of class relevant to the following class description is required.
-    If ommitted, all are returned.
-    \item[IRI] The IRI, contained between angled brackets following the OWL
-    keyword, will define the URI of the remote OWL endpoint.
-    \item[Query] Following, between the curly brackets, will be a Manchester OWL
-    Syntax query referring to relevant objects to be returned to the query.
-\end{description}
-
-Upon parsing the OWL block the syntax will send a query to an OWL reasoner
-endpoint, and integrate the returned results into the query. 
-
-\subsubsection{Syntax Implementation}
-
-To preserve a simple proof-of-concept and prototype implementation of the
-software, as well as retaining flexibility in the case of changing project
-parameters, we approached this project with a simple solution in the form of a
-PHP script. PHP also chosen because of its relative flexibility (acceptance of
-input from both the command line and the Web), along with the existence of a
-well-supported SPARQL library.
-
-\begin{enumerate}
-    \item Input the SPARQL query into the script.
-    \item Scan the script for OWL blocks (syntax described above).
-    \item Run any OWL queries.
-    \item Replace the OWL block with the resultset from the OWL query.
-    \item Run the SPARQL query.
-    \item Return the full resultset.
-\end{enumerate}
-
-In terms of inputting the SPARQL query into the processing script, it supports
-being run both from the command line and over the web, by checking whether it
-was invoked from a web server or from the command line - then pulling the input
-data from the appropriate source (either from the web form in POST data, or command
-line arguments specifying either a file or a plain text query).
-
-Before handling the SPARQL query, a simple regular expression is used to find
-all occurences of the OWL block syntax described above. It then iterates through
-these occurences, and uses the data extracted from them by the regular
-expression to send the given Manchester OWL Syntax Query to the specified OWL
-Endpoint.
-
-The endpoint returns appropriate classes given the OWL query in JSON format, or an 
-error. In the case of valid classes being returned, the JSON will be parsed for
-the IRI and class names of said classes, then replacing the OWL block in
-the query itself with the data about the returned classes inline in the query.
-This would look like the following when querying relevant classes to the adaxial
-cell in the Zebrafish ontology\cite{zfin}:
-
-If the optional \emph{SILENT} keyword was used in conjunction with the OWL block
-in question, and there was an error receiving any data from the remote OWL
-enpoint, then the OWL block is simply deleted and the program continues either
-processing and remaining OWL blocks, or will continue to execute the SPARQL
-query. Otherwise, the program will exit and return an error message to the user stating
-the the OWL request failed - including an error message returned from the OWL endpoint.
-
-\begin{lstlisting}
-VALUES (?iri ?id) { 
-    ( http://purl.obolibrary.org/obo/#ZFA_0009000  ZFA_0009000 ) 
-    ( http://www.w3.org/2002/07/owl#Nothing  Nothing )
-}
-\end{lstlisting}
-
-Once all of the OWL blocks have been traversed and evaluated without error, the
-SPARQL query will be made to a given remote endpoint. To perform this, the 
-PHP-SPARQL-Lib library\cite{phpsparqllib} is used, which provides a class to 
-construct, query and handle result sets from remote SPARQL endpoints using CURL.
-
-Once the SPARQL query has been completed, the results will be displayed to the
-user in an appropriate manner - either on a web page or printed to the executing
-terminal.
-
-As an example, a simple SPARQL query including an OWL block like so, which asks
-for classes in the biology ontology//TODO CITE for classes which have a 'plasma
-membrane' as a part:
-
-\begin{lstlisting}
-SELECT * WHERE {}
-OWL <http://jagannath.pdn.cam.ac.uk:9090> {
-    has\_part some 'plasma membrane'
-}
-\end{lstlisting}
-
-The OWL block would first be identified, and then the given Manchester OWL
-Syntax query would be sent to the specified endpoint and the block itself would
-then be replaced by a list of the resulting values before being executed against
-a SPARQL endpoint:
-
-\begin{lstlisting}
-SELECT * WHERE {} 
-VALUES (?iri ?id) { 
-    ( http://www.w3.org/2002/07/owl##Thing Thing ) 
-    ( http://purl.obolibrary.org/obo/#GO\_0030313 GO\_0030313 ) 
-    ( http://purl.obolibrary.org/obo/#GO\_0012505 GO\_0012505 ) 
-}
-\end{lstlisting}
-
-\subsubsection{Web Interface}
-
-The web interface is also a simple piece of software, it existing as a simple
-HTML form which accepts a SPARQL (with potential OWL block) query along with a
-remote endpoint to execute it against. Upon submitting the HTML form, the script
-described in the previous section is passed POST data from the page, then
-executing the query and printing the results to the screen, or displaying an
-error message in the case of an error.
-
-* Insert screenshot
-
-\subsubsection{Testing and Documentation}
-
-The SPARQL extension implementation's design is described by this document. The
-script itself also includes ample commenting to help a reader understand the
-flow and meaning of the code involved in the software.
-
-In terms of user-end documentation, The web interface also includes a link to a 
-basic page with a basic description
-about the OWL block and how to use it - including examples. Furthermore, a
-README is included with the distribution of the project which describes its
-purpose as well as including information also found on the web interface's help
-page.
 
 \subsection{OWL Endpoint}
 
@@ -1332,7 +1181,17 @@ The software uses the object orientated paradigm (as is natural for Java), along
 with the observer pattern for the HTTP server and several hash map data models
 for storing and processing ontology data.
 
-* Insert class diagram
+In \ref{fig:requestclass}, the class diagram for the component of the software
+which handles ontology loading and requests against the ontology. The
+RequestManager holds a number of QueryEngines, which each hold and handle class
+queries for a loaded ontology.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\textwidth]{sparqowlapi.png}
+  \caption{SPARQOWL API Request Class Diagram}
+  \label{fig:requestclass}
+\end{figure}
 
 \subsubsection{Implementation}
 
@@ -1473,13 +1332,341 @@ information about configuration, such as populating the file from which to load
 the ontologies. This document also provides an overview of the underlying design
 and decisions taken during the development of the program. 
 
+\subsection{SPARQL Extension}
+
+The SPARQL extension takes place in the form of a wrapper around a script which
+sends a SPARQL query, first evaluating the script for any OWL blocks - in the
+case of which it sends an OWL query to the endpoint and includes any resulting
+classes in the query in place of the OWL block.
+
+The script is largely procedural, making use of functions for the processing of
+the query and OWL data. This approach was chosen over object orientation due to
+the simplicity of the script.
+
+\subsubsection{SPARQL Syntax}
+
+As described in the State of The Art, there is already a SERVICE keyword
+included in the SPARQL language which provides a good model for sending a text
+query to a remote endpoint, in terms of the syntax.\cite{sservice} 
+
+\begin{lstlisting}
+SERVICE <http://nourishedcloud.com/turtles> { 
+    ?s tu:name ?name . ?s tu:owner ?owner
+}
+\end{lstlisting}
+
+Evidenced above, the SERVICE block includes a URI which indicates a remote
+SPARQL endpoint, then includes a SPARQL query to send the server - upon
+execution and return of the results they are included in the resultset of the
+rest of the query.
+
+For an OWL query the pattern will be very similar - we want to send a Manchester
+OWL Syntax Query to a remote OWL endpoint, and combine the resulting classes
+with the resultset. Therefore, my software includes an 'OWL' block to the SPARQL 
+language, which uses a similar syntactic pattern to the SERVICE keyword:
+
+\begin{lstlisting}
+OWL SILENT EQUIVALENT <http://realispicio.us:9090> {
+    has_part some 'plasma membrane'
+}
+\end{lstlisting}
+
+There are four properties to the above query:
+
+\begin{description}
+    \item[OWL] The OWL keyword will designate the beginning of an OWL block
+    denoting the beginning of the description for a query to be sent to a remote
+    OWL endpoint.
+    \item[SILENT] This is an optional keyword, which if included will mean that
+    no results are integrated if a query fails but the query will continue,
+    while if it isn't set and a query fails the SPARQL query will be halted and
+    return an error message.
+    \item[EQUIVALENT] This flag may contain either \emph{EQUIVALENT},
+    \emph{SUPER} or \emph{SUB}, which indicates to the remote OWL endpoint
+    which type of class relevant to the following class description is required.
+    If ommitted, all are returned.
+    \item[IRI] The IRI, contained between angled brackets following the OWL
+    keyword, will define the URI of the remote OWL endpoint.
+    \item[Query] Following, between the curly brackets, will be a Manchester OWL
+    Syntax query referring to relevant objects to be returned to the query.
+\end{description}
+
+Upon parsing the OWL block the syntax will send a query to an OWL reasoner
+endpoint, and integrate the returned results into the query. 
+
+\subsubsection{Syntax Implementation}
+
+To preserve a simple proof-of-concept and prototype implementation of the
+software, as well as retaining flexibility in the case of changing project
+parameters, we approached this project with a simple solution in the form of a
+PHP script. PHP also chosen because of its relative flexibility (acceptance of
+input from both the command line and the Web), along with the existence of a
+well-supported SPARQL library.
+
+\begin{enumerate}
+    \item Input the SPARQL query into the script.
+    \item Scan the script for OWL blocks (syntax described above).
+    \item Run any OWL queries.
+    \item Replace the OWL block with the resultset from the OWL query.
+    \item Run the SPARQL query.
+    \item Return the full resultset.
+\end{enumerate}
+
+In terms of inputting the SPARQL query into the processing script, it supports
+being run both from the command line and over the web, by checking whether it
+was invoked from a web server or from the command line - then pulling the input
+data from the appropriate source (either from the web form in POST data, or command
+line arguments specifying either a file or a plain text query).
+
+Before handling the SPARQL query, a simple regular expression is used to find
+all occurences of the OWL block syntax described above. It then iterates through
+these occurences, and uses the data extracted from them by the regular
+expression to send the given Manchester OWL Syntax Query to the specified OWL
+Endpoint.
+
+The endpoint returns appropriate classes given the OWL query in JSON format, or an 
+error. In the case of valid classes being returned, the JSON will be parsed for
+the IRI and class names of said classes, then replacing the OWL block in
+the query itself with the data about the returned classes inline in the query.
+This would look like the following when querying relevant classes to the adaxial
+cell in the Zebrafish ontology\cite{zfin}:
+
+If the optional \emph{SILENT} keyword was used in conjunction with the OWL block
+in question, and there was an error receiving any data from the remote OWL
+enpoint, then the OWL block is simply deleted and the program continues either
+processing and remaining OWL blocks, or will continue to execute the SPARQL
+query. Otherwise, the program will exit and return an error message to the user stating
+the the OWL request failed - including an error message returned from the OWL endpoint.
+
+\begin{lstlisting}
+VALUES (?iri ?id) { 
+    ( http://purl.obolibrary.org/obo/#ZFA\_0009000  ZFA\_0009000 ) 
+    ( http://www.w3.org/2002/07/owl#Nothing  Nothing )
+}
+\end{lstlisting}
+
+Once all of the OWL blocks have been traversed and evaluated without error, the
+SPARQL query will be made to a given remote endpoint. To perform this, the 
+PHP-SPARQL-Lib library\cite{phpsparqllib} is used, which provides a class to 
+construct, query and handle result sets from remote SPARQL endpoints using CURL.
+
+Once the SPARQL query has been completed, the results will be displayed to the
+user in an appropriate manner - either on a web page or printed to the executing
+terminal.
+
+As an example, a simple SPARQL query including an OWL block like so, which asks
+for classes in the biology ontology//TODO CITE for classes which have a 'plasma
+membrane' as a part:
+
+\begin{lstlisting}
+SELECT * WHERE {}
+OWL <http://jagannath.pdn.cam.ac.uk:9090> {
+    has\_part some 'plasma membrane'
+}
+\end{lstlisting}
+
+The OWL block would first be identified, and then the given Manchester OWL
+Syntax query would be sent to the specified endpoint and the block itself would
+then be replaced by a list of the resulting values before being executed against
+a SPARQL endpoint:
+
+\begin{lstlisting}
+SELECT * WHERE {} 
+VALUES (?iri ?id) { 
+    ( http://www.w3.org/2002/07/owl##Thing Thing ) 
+    ( http://purl.obolibrary.org/obo/#GO\_0030313 GO\_0030313 ) 
+    ( http://purl.obolibrary.org/obo/#GO\_0012505 GO\_0012505 ) 
+}
+\end{lstlisting}
+
+The limitations of this addition in terms of actually using the returned class
+URIs for matching against RDF datastores is that there is often a mismatch
+between the URI prefixes and ID formats between OWL ontology class IDs and the
+IDs which class annotations in RDF datasets use.
+
+For exmaple, the biomodel ontology's RDF datastores use the following IRI to annotate a
+acetylcholine-gated channel complex:
+
+\begin{lstlisting}
+http://identifiers.org/go/GO:0005892
+\end{lstlisting}
+
+Meanwhile, the OWL Gene Ontology uses :
+
+\begin{lstlisting}
+http://purl.obolibrary.org/obo/GO\_0005892
+\end{lstlisting}
+
+Due to this, URIs returned by the OWL ontology won't actually be matched against
+the models in the biomodel ontology.
+
+This is a well known problem, and originates from legacy ontology development
+whereby ontologies would simply use an id (e.g.) GO\_0005892 to identify a class.
+However, RDF datastores use URIs as predicate values and therefore RDF
+datastores would essentially 'make up' prefixes for for their annotations.
+
+Since then, OBO decided on a standardised format for annotation URIs
+(http://purl.obolibrary.org/obo/), but unfortunately RDF datastores have not yet
+been updated to support this new format. 
+
+Several approaches have been made to address this issue, such as
+http://identifiers.org, which resolves and finds links between identifiers. But
+in essence this means further ID formats have been created beyond those which
+already exist! 
+
+Thankfully, IRI and ID formats are relativley easy to tranform and then REPLACE
+functionality of the SPARQL language, the following example for example takes
+the URIs provided by the OWL endpoints and transforms then to a format
+acceptable to the RDF datastore.
+
+\begin{lstlisting}
+BIND (IRI (REPLACE(STR(?id), "http://purl.obolibrary.org/obo/GO\_",
+"http://identifiers.org/go/GO:")) as ?newgoid)
+\end{lstlisting}
+
+This does not compromise the usability of the sofware, however it adds an
+extra level of complexity wich must fall on the creator of the SPARQL query to
+create a workable theory.
+
+Hopefully, in time the maintaners of the RDF datastores will work towards
+uniformity in annotation IDs, simplifying the process of OWL integration using
+this method.
+
+\subsubsection{Web Interface}
+
+The web interface is also a simple piece of software, it existing as a simple
+HTML form which accepts a SPARQL (with potential OWL block) query along with a
+remote endpoint to execute it against. Upon submitting the HTML form, the script
+described in the previous section is passed POST data from the page, then
+executing the query and printing the results to the screen, or displaying an
+error message in the case of an error.
+
+* Insert screenshot
+
+\subsubsection{Testing and Documentation}
+
+The SPARQL extension implementation's design is described by this document. The
+script itself also includes ample commenting to help a reader understand the
+flow and meaning of the code involved in the software.
+
+In terms of user-end documentation, The web interface also includes a link to a 
+basic page with a basic description
+about the OWL block and how to use it - including examples. Furthermore, a
+README is included with the distribution of the project which describes its
+purpose as well as including information also found on the web interface's help
+page.
+
+\subsection{Use Cases and Examples}
+
+The BioModels database is a large RDF datastore which stores models of
+biological processes, its latest release included more than 140,000 models - all
+of which are cited and supported by peer-reviewed scientific literature.
+
+Models also include annotations under various properties, which are URIs which 
+refer to classes in other ontologies (usually OWL) thereby linking that property
+of the model with a class in another dataset. 
+
+A common example is an annotation on isVersionOf, so the biomodel entry for a
+\emph{biliganted basal state} is annotated to \emph{GO:0005892}, or the
+\emph{acetylcholine-gated channel complex}.
+
+Example 3 given on the SPARQL endpoint provided for the BioModels database
+retrieves all models in the datastore which are annotations to the
+acetylcholine-gated channel complex, with the following query (prefixes ommited):
+
+\begin{lstlisting}
+SELECT ?modelElement ?elementType ?qualifier WHERE { 
+  ?modelElement ?qualifier <http://identifiers.org/go/GO:0005892> .  
+  ?qualifier rdfs:subPropertyOf sbmlrdf:sbmlAnnotation . 
+  ?modelElement rdf:type ?elementType 
+}
+\end{lstlisting}
+
+The annotation must be referred to by its URI
+(http://identifiers.org/go/GO:0005892), and therefore any user wishing to use a
+similar or more complicated query must use a desktop ontology utility such as
+Protege to find the relevant class, and then paste the necessary ID into the query. 
+With the SPARQL OWL extension one can simply query this ID directly from an OWL
+endpoint using its label and implant it into the query. So the equivalent would 
+be (prefixes ommitted):
+
+\begin{lstlisting}
+SELECT ?newgoid ?modelElement ?elementType ?qualifier WHERE {
+  OWL ?id EQUIVALENT <jagannath.pdn.cam.ac.uk:9090> { 'acetylcholine-gated channel complex' }
+  BIND (IRI (REPLACE(STR(?id), "http://purl.obolibrary.org/obo/GO_", "http://identifiers.org/go/GO:")) as ?newgoid)
+
+  ?modelElement ?qualifier ?newgoid .
+  ?qualifier rdfs:subPropertyOf sbmlrdf:sbmlAnnotation .
+  ?modelElement rdf:type ?elementType
+}
+\end{lstlisting}
+
+Since the OWL data endpoint can be loaded with several ontologies at once, 
+one can also query for annotations from several ontologies at once (for example
+the protein sequence ontology).
+
+Furthermore, since one can additionally query for superclasses and subclasses
+(or both) of the given Manchester OWL Syntax class expression (and the datastore 
+is queried for all results returned by the OWL block), a wider range of useful and
+relevant results may be retrieved from the RDF datastore - since annotation IDs
+are returned for all classes in the ontology relevant to the expression in the
+given hierarchical direction.
+
+Additionally, since any Manchester OWL Syntax class expression can be provided 
+in the OWL block, more advanced queries can be made to retrieve annotations to
+search against. For example, this query retrieves annotation IDs for all classes
+which are a part of the plasma membrane in the gene ontology, when making a
+remote query to the https://www.ebi.ac.uk/rdf/services/biomodels/sparql SPARQL
+endpoint with the OWL block preprocessor (prefixes ommitted):
+
+\begin{lstlisting}
+SELECT ?newgoid ?modelElement ?elementType ?qualifier WHERE {
+  OWL ?id SUPERCLASS <jagannath.pdn.cam.ac.uk:9090> { has\_part some 'plasma membrane' }
+  BIND (IRI (REPLACE(STR(?id), "http://purl.obolibrary.org/obo/GO\_", "http://identifiers.org/go/GO:")) as ?newgoid)
+
+  ?modelElement ?qualifier ?newgoid .
+  ?qualifier rdfs:subPropertyOf sbmlrdf:sbmlAnnotation .
+  ?modelElement rdf:type ?elementType
+}
+\end{lstlisting}
+
+Or query for all items annotated as being part of apoptosis - processes involved
+in cell death:
+
+\begin{lstlisting}
+SELECT ?newgoid ?modelElement ?elementType ?qualifier WHERE {
+  OWL ?id SUBCLASS <jagannath.pdn.cam.ac.uk:9090> { part\_of some apoptosis }
+  BIND (IRI (REPLACE(STR(?id), "http://purl.obolibrary.org/obo/GO\_", "http://identifiers.org/go/GO:")) as ?newgoid)
+
+  ?modelElement ?qualifier ?newgoid .
+  ?qualifier rdfs:subPropertyOf sbmlrdf:sbmlAnnotation .
+  ?modelElement rdf:type ?elementType
+}
+\end{lstlisting}
+
+As previously mentioned many RDF datastores include outdated annotation IDs, in
+this case using a different URI and prefix seperation character. In these
+examples this is rectified by using the REPLACE functionality of the SPARQL
+language to modify the returned IDs to conform to the required format. For an
+unknown reason this actually slows the query down somewhat, though in future the
+annotation IDs used in RDF datastores will be updated to conform to their
+definitions in the ontologies.
+
+An OWL endpoint can currently be found running at
+\emph{http://jagannath.pdn.cam.ac.uk:9090/}, loaded with several ontologies -
+particularly the Gene Ontology.
+
+Additionally, an instance of the SPARQOWL web interface can be found at
+\emph{http://jagannath.pdn.cam.ac.uk/sparqowl/}.
+
 \section{Conclusion}
 
 \subsection{Evaluation}
 
 Through the research and execution of this project, it was found that there was
 indeed no current method by which to use a human-writable syntax to directy query OWL
-ontologies on the web. 
+ontologies on the web, useful particularly for querying models in RDF datastores
+annotated with IDs from OWL ontologies.
 
 It was found that SPARQL includes provisions for manipulating OWL ontologies by
 first converting them to an RDF format, however this sacrificed several endemic
@@ -1801,7 +1988,7 @@ queries is faesible.
   Artificial Intelligence, 48(1):1–26, 1991.
 
 \bibitem{phpsparqllib}
-  Christopher Gutteridge & University of Southampton,
+  Christopher Gutteridge \& University of Southampton,
   PHP-SPARQL-Lib,
   https://github.com/cgutteridge/PHP-SPARQL-Lib,
   Accessed 23/2/2014.
